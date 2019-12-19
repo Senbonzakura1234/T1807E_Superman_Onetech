@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using OneTech.Data;
 using OneTech.Models;
 
 namespace OneTech.Controllers
 {
     public class StudentsController : Controller
     {
-        private OneTechContext db = new OneTechContext();
+        private readonly MyContext _db = new MyContext();
 
         // GET: Students
         public ActionResult Index()
         {
-            var students = db.Students.Include(s => s.Class);
+            var students = _db.Students.Include(s => s.Class);
             return View(students.ToList());
         }
 
@@ -29,7 +25,7 @@ namespace OneTech.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Student student = db.Students.Find(id);
+            var student = _db.Students.Find(id);
             if (student == null)
             {
                 return HttpNotFound();
@@ -40,7 +36,7 @@ namespace OneTech.Controllers
         // GET: Students/Create
         public ActionResult Create()
         {
-            ViewBag.ClassId = new SelectList(db.Classes, "Id", "Name");
+            ViewBag.ClassId = new SelectList(_db.Classes, "Id", "Name");
             return View();
         }
 
@@ -59,12 +55,12 @@ namespace OneTech.Controllers
                 student.PenaltyLevel = 0;
                 student.CreatedAt = DateTime.Now;
                 student.DeletedAt = DateTime.Now;
-                db.Students.Add(student);
-                db.SaveChanges();
+                _db.Students.Add(student);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ClassId = new SelectList(db.Classes, "Id", "Name", student.ClassId);
+            ViewBag.ClassId = new SelectList(_db.Classes, "Id", "Name", student.ClassId);
             return View(student);
         }
 
@@ -75,12 +71,12 @@ namespace OneTech.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Student student = db.Students.Find(id);
+            var student = _db.Students.Find(id);
             if (student == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ClassId = new SelectList(db.Classes, "Id", "Name", student.ClassId);
+            ViewBag.ClassId = new SelectList(_db.Classes, "Id", "Name", student.ClassId);
             return View(student);
         }
 
@@ -93,11 +89,11 @@ namespace OneTech.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(student).State = EntityState.Modified;
-                db.SaveChanges();
+                _db.Entry(student).State = EntityState.Modified;
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.ClassId = new SelectList(db.Classes, "Id", "Name", student.ClassId);
+            ViewBag.ClassId = new SelectList(_db.Classes, "Id", "Name", student.ClassId);
             return View(student);
         }
 
@@ -108,7 +104,7 @@ namespace OneTech.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Student student = db.Students.Find(id);
+            var student = _db.Students.Find(id);
             if (student == null)
             {
                 return HttpNotFound();
@@ -121,9 +117,9 @@ namespace OneTech.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Student student = db.Students.Find(id);
-            db.Students.Remove(student);
-            db.SaveChanges();
+            var student = _db.Students.Find(id);
+            if (student != null) _db.Students.Remove(student);
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -131,7 +127,7 @@ namespace OneTech.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }
