@@ -50,11 +50,6 @@ namespace OneTech.Controllers
             if (ModelState.IsValid)
             {
                 student.StudentCode = "SC" + student.Id;
-                student.OwedCash = 0;
-                student.OwedPushUp = 0;
-                student.PenaltyLevel = 0;
-                student.CreatedAt = DateTime.Now;
-                student.DeletedAt = DateTime.Now;
                 _db.Students.Add(student);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
