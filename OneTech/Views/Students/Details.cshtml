@@ -1,0 +1,98 @@
+﻿@model OneTech.Models.Student
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Class.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Class.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StudentCode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwedCash)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OwedCash)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OwedPushUp)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OwedPushUp)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PenaltyLevel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PenaltyLevel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UpdatedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UpdatedAt)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeletedAt)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DeletedAt)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
