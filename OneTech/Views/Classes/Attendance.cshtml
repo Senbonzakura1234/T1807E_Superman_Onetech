@@ -1,0 +1,37 @@
+﻿@using OneTech.Models
+@model IEnumerable<OneTech.Models.Student>
+<h2>@ViewBag.Name Attendance</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">StudentCode</th>
+                    <th scope="col">FullName</th>
+                    <th scope="col">OwedCash</th>
+                    <th scope="col">OwedPushUp</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i< Model.Count();i++)
+                    {
+                    <tr>
+                        <th scope="row">@(i+1)</th>
+                        <td>@Model.ElementAt(i).StudentCode</td>
+                        <td>@Model.ElementAt(i).FullName</td>
+                        <td>@Model.ElementAt(i).OwedCash</td>
+                        <td>@Model.ElementAt(i).OwedPushUp</td>
+                        <td>
+                            <button type="button" class="btn btn-primary">Cash</button>
+                            <button type="button" class="btn btn-success">PushUp</button>
+                            <button type="button" class="btn btn-danger">Penalty</button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

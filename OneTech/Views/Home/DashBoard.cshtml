@@ -1,0 +1,31 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutDashBoard.cshtml";
+}
+
+<h2>This is Content</h2>
+<div id="tar"></div>
+@section scripts
+{
+    <script type="text/javascript">
+        function search() {
+            $.ajax({
+                url: "/Students/index?searchString="+$('#searchString').val(),
+                success: function(result) {
+                    $('#tar').html(result);
+                }
+            });
+        }
+
+        $(function() {
+            $('#SearchString').keypress(function(e) {
+                if (e.keyCode === 13) {
+                    search();
+                }
+            });
+        });
+        $("#btnSearch").click(function () {
+            search();
+        });
+    </script>
+}

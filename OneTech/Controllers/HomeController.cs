@@ -3,27 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using OneTech.Models;
 
 namespace OneTech.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        MyContext Db = new MyContext();
+        public ActionResult DashBoard()
         {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
+            ViewBag.listClass = Db.Classes.ToList();
             return View();
         }
     }
