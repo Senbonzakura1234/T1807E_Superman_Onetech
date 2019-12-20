@@ -44,6 +44,13 @@ namespace OneTech.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime? DeletedAt { get; set; }
 
+        public enum StudentStatusEnum
+        {
+            Inactive = 2,
+            Active = 1,
+            Deleted = 0
+        }
+        public StudentStatusEnum StudentStatus { get; set; }
 
         public Student()
         {
