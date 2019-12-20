@@ -54,6 +54,7 @@ namespace OneTech.Models
 
         public Student()
         {
+            StudentStatus = StudentStatusEnum.Active;
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
         }

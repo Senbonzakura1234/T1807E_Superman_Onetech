@@ -21,18 +21,11 @@
             @Html.DisplayNameFor(model => model.StudentCode)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.OwedCash)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OwedPushUp)
+            @Html.DisplayNameFor(model => model.PenaltyLevel)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.PenaltyLevel)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Birthday)
-        </th>
-        <th></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -47,16 +40,7 @@
             @Html.DisplayFor(modelItem => item.StudentCode)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.OwedCash)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OwedPushUp)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.PenaltyLevel)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Birthday)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

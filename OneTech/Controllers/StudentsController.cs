@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using LinqKit;
 using OneTech.Models;
 
 namespace OneTech.Controllers
@@ -14,8 +15,10 @@ namespace OneTech.Controllers
         // GET: Students
         public ActionResult Index()
         {
-            var students = _db.Students.Include(s => s.Class);
-            return View(students.ToList());
+            var predicate = PredicateBuilder.New<Student>(true);
+            predicate = predicate.And(f => f.StudentStatus != Student.StudentStatusEnum.Deleted);
+            var data = _db.Students.AsExpandable().Where(predicate);
+            return View(data);
         }
 
         // GET: Students/Details/5
@@ -45,7 +48,7 @@ namespace OneTech.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FullName,StudentCode,ClassId,OwedCash,OwedPushUp,PenaltyLevel,Birthday,CreatedAt,UpdatedAt,DeletedAt")] Student student)
+        public ActionResult Create([Bind(Include = "Id,FullName,StudentCode,ClassId,OwedCash,OwedPushUp,PenaltyLevel,Birthday,CreatedAt,UpdatedAt,DeletedAt,StudentStatus")] Student student)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +70,7 @@ namespace OneTech.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             var student = _db.Students.Find(id);
-            if (student == null)
+            if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
             {
                 return HttpNotFound();
             }
@@ -85,6 +88,10 @@ namespace OneTech.Controllers
             if (ModelState.IsValid)
             {
                 student.UpdatedAt = DateTime.Now;
+                if (student.StudentStatus == Student.StudentStatusEnum.Deleted)
+                {
+                    student.DeletedAt = DateTime.Now;
+                }
                 _db.Entry(student).State = EntityState.Modified;
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -116,9 +123,11 @@ namespace OneTech.Controllers
             var student = _db.Students.Find(id);
             if (student != null && ModelState.IsValid)
             {
+                student.UpdatedAt = DateTime.Now;
                 student.DeletedAt = DateTime.Now;
+                student.StudentStatus = Student.StudentStatusEnum.Deleted;
                 _db.Entry(student).State = EntityState.Modified;
-            };
+            }
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
