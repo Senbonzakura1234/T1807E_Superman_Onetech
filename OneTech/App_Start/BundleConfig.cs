@@ -24,6 +24,18 @@ namespace OneTech
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/mainJs").Include(
+                "~/Scripts/main.js"));
+
+
+
+
+            bundles.Add(new ScriptBundle("~/bundles/root-script").Include(
+                "~/Content/vendors/js/vendor.bundle.base.js",
+                "~/Content/vendors/chart.js/Chart.min.js",
+                "~/Scripts/js/off-canvas.js", "~/Scripts/js/hoverable-collapse.js",
+                "~/Scripts/js/misc.js", "~/Scripts/js/dashboard.js", "~/Scripts/js/todolist.js"));
         }
     }
 }
