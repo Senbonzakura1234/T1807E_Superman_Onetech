@@ -22,3 +22,6 @@ select,
 textarea {
     max-width: 280px;
 }
+.navbar.fixed-top + .page-body-wrapper {
+    padding-top: 0 !important;
+}
