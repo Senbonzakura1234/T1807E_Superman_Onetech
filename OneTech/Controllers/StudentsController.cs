@@ -84,6 +84,7 @@ namespace OneTech.Controllers
         {
             if (ModelState.IsValid)
             {
+                student.UpdatedAt = DateTime.Now;
                 _db.Entry(student).State = EntityState.Modified;
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -113,7 +114,11 @@ namespace OneTech.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             var student = _db.Students.Find(id);
-            if (student != null) _db.Students.Remove(student);
+            if (student != null && ModelState.IsValid)
+            {
+                student.DeletedAt = DateTime.Now;
+                _db.Entry(student).State = EntityState.Modified;
+            };
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
