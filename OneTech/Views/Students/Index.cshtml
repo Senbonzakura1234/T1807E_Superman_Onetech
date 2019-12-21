@@ -1,53 +1,186 @@
-﻿@model IEnumerable<OneTech.Models.Student>
+﻿@using OneTech.Models
+@model IEnumerable<OneTech.Models.Student>
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Advanced Search</h4>
+                <p class="card-description d-sm-flex">
+                    <span class="text-muted text-small my-auto">Search Customer with filter</span>
+                    <br class="d-sm-none" />
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Class.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FullName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StudentCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PenaltyLevel)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PenaltyLevel)
-        </th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Class.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StudentCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PenaltyLevel)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+                    <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilterCustomer">
+                        Clear filter
+                    </button>
+                </p>
+                @using (Html.BeginForm("Index", "Students", FormMethod.Get,
+                    new { role = "search", id = "AdvanceSearchFormCustomer" }))
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-lg-0">
+                                <label for="advanceFullname">
+                                    <span class="text-small">Fullname</span>
+                                </label>
+                                <input id="advanceFullname" value="@ViewBag.advanceFullname" name="advanceFullname" type="text" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group mb-lg-0">
+                                @* ReSharper disable once Html.IdNotResolved *@
+                                <label for="datefilter">
+                                    <span class="text-small">Date filter</span>
+                                </label>
+                                <input type="text" name="datefilter" id="datefilter" value="" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mt-3 text-right">
+                            <input type="submit" class="btn btn-primary btn-sm" value="Search" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body table-responsive">
+                <h4 class="card-title">Customer</h4>
+                <p class="card-description d-sm-flex">
+                    <span class="text-muted text-small my-auto">Click customer name to see detail</span>
+                    <br class="d-sm-none" />
+
+                    <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
+                        Create New <span class="mdi mdi-plus-circle"></span>
+                    </a>
+                </p>
+                <table class="table" id="update-customer">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FullName)
+                            </th>
+                            <th class="d-none d-sm-table-cell">
+                                @Html.DisplayNameFor(model => model.Class)
+                            </th>
+                            <th class="d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.Birthday)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.PenaltyLevel)
+                            </th>
+                            <th class="text-center d-none d-lg-table-cell">
+                                Edit
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+                                <td>
+                                    <b class="text-small">@Html.DisplayFor(modelItem => item.Id)</b>
+                                </td>
+
+                                <td>
+                                    <a class="badge w-100 @(item.StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
+                                            w-100" href="@Url.Action("Details", "Students", new {id = item.Id})">
+                                        @Html.DisplayFor(modelItem => item.FullName)
+                                    </a>
+                                </td>
+                                <td class="d-none d-sm-table-cell text-info">
+                                    @Html.DisplayFor(modelItem => item.Class.Name)
+                                </td>
+                                <td class="d-none d-xl-table-cell">
+                                    @Html.DisplayFor(modelItem => item.Birthday)
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    @Html.DisplayFor(modelItem => item.PenaltyLevel)
+                                </td>
+                                <td class="text-center d-none d-lg-table-cell">
+                                    <a class="badge badge-warning" href="@Url.Action("Edit", "Students", new {id = item.Id})">
+                                        <span class="mdi mdi-pencil-box-outline"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            @*<a class="btn btn-link" href="@Url.Action("Edit", "Customers", new {id = item.Id})">
+                                    <span class="mdi mdi-pencil-box-outline"></span>
+                                </a>
+                                <a class="btn btn-link" href="@Url.Action("Details", "Customers", new {id = item.Id})">
+                                    <span class="mdi mdi-file-document"></span>
+                                </a>
+                                <a class="btn btn-link" href="@Url.Action("Delete", "Customers", new {id = item.Id})">
+                                    <span class="mdi mdi-trash-can-outline"></span>
+                                </a>*@
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            // init start time and end time;
+            var startDate = new Date();
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            var endDate = new Date();
+
+            // check start and end parameter
+            const startPara = getParameterFromUrl('start');
+            if (startPara != null) {
+                startDate = new Date(startPara);
+            }
+            const endPara = getParameterFromUrl('end');
+            if (endPara != null) {
+                endDate = new Date(endPara);
+            }
+
+
+            // ReSharper disable once PossiblyUnassignedProperty
+            $('input[name="datefilter"]').daterangepicker({
+                autoUpdateInput: true,
+                startDate: startDate,
+                endDate: endDate,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+// ReSharper disable UnusedParameter
+
+            $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
+                const start = picker.startDate.format('YYYY-MM-DD');
+                const end = picker.endDate.format('YYYY-MM-DD');
+                window.location.href = window.location.href.split('?')[0] + '?start=' + start + '&end=' + end;
+            });
+
+            $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
+// ReSharper restore UnusedParameter
+                $(this).val("");
+            });
+
+
+            function getParameterFromUrl(parameter) {
+                const urlString = window.location.href;
+                const url = new URL(urlString);
+                return url.searchParams.get(parameter);
+            }
+        });
+    </script>
 }
 
-</table>
