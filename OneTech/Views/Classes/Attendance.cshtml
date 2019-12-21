@@ -1,0 +1,326 @@
+﻿@using System.Collections
+@using OneTech.Models
+@model IEnumerable<OneTech.Models.Student>
+@{
+    ViewBag.Title = "View";
+    var totalPage = ((int?)ViewBag.TotalPage).Value;
+    var currentPage = ((int?)ViewBag.CurrentPage).Value;
+    var limit = ((int?)ViewBag.Limit).Value;
+    var currentPara = "&start=" + ViewBag.Start + "&end=" + ViewBag.End;
+
+}
+
+@*<ul>
+    .@foreach (var item in ViewBag.ClassList)
+    {
+        <li><a href="@Url.Action("Attendance","Classes",new {className=@item.Name})">@item.Name</a></li>
+    }
+</ul>*@
+<div class="row" id="accordion">
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title accordion-toggle">List of Class<span id="accordionIcon">▼</span></h4>
+            <section class="card-description">
+                @using (Html.BeginForm("Attendance", "Classes", FormMethod.Get))
+                {
+                    @Html.DropDownList("List of Class", (IEnumerable<SelectListItem>)ViewBag.ClassList, new { @class = "form-control", onchange = "selectedClass(this)" })
+                }
+            </section>
+        </div>
+    </div>
+</div>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title accordion-toggle">Advanced Search<span id="accordionIcon">▼</span></h4>
+            <section class="card-description">
+                <p class="card-description d-sm-flex">
+                    <span class="text-muted text-small my-auto">Search Customer with filter</span>
+                    <br class="d-sm-none" />
+                    <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilterCustomer">
+                        Clear filter
+                    </button>
+                </p>
+                @using (Html.BeginForm("Index", "Students", FormMethod.Get,
+                    new { role = "search", id = "AdvanceSearchFormCustomer" }))
+                {
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-lg-0">
+                                <label for="advanceFullname">
+                                    <span class="text-small">Fullname</span>
+                                </label>
+                                <input id="advanceFullname" value="@ViewBag.advanceFullname" name="advanceFullname" type="text" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group mb-lg-0">
+                                @* ReSharper disable once Html.IdNotResolved *@
+                                <label for="datefilter">
+                                    <span class="text-small">Date filter</span>
+                                </label>
+                                <input type="text" name="datefilter" id="datefilter" value="" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mt-3 text-right">
+                            <input type="submit" class="btn btn-primary btn-sm" value="Search" />
+                        </div>
+                    </div>
+                }
+            </section>
+            
+        </div>
+    </div>
+</div>
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body table-responsive">
+            <h4 class="card-title">Attendance</h4>
+            <p class="card-description d-sm-flex">
+                <span class="text-muted text-small my-auto" id="className">@ViewBag.Name Attendance</span>
+                <br class="d-sm-none"/>
+
+                <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
+                    Create New <span class="mdi mdi-plus-circle"></span>
+                </a>
+            </p>
+            <table class="table" id="update-customer">
+                <thead class="text-primary">
+                <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FullName)
+                    </th>
+                    <th class="d-none d-sm-table-cell">
+                        @Html.DisplayNameFor(model => model.Class)
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        @Html.DisplayNameFor(model => model.Birthday)
+                    </th>
+                    <th class="text-center d-none d-xl-table-cell">
+                        @Html.DisplayNameFor(model => model.PenaltyLevel)
+                    </th>
+                    <th class="text-center d-none d-lg-table-cell">
+                        OnTime
+                    </th>
+                    <th class="text-center d-none d-lg-table-cell">
+                        Penalty
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+
+                    <tr>
+                        <td>
+                            <b class="text-small">@Html.DisplayFor(modelItem => item.Id)</b>
+                        </td>
+
+                        <td>
+                            <a class="badge w-100 @(item.StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
+                                            w-100" href="@Url.Action("Details", "Students", new {id = item.Id})">
+                                @Html.DisplayFor(modelItem => item.FullName)
+                            </a>
+                        </td>
+                        <td class="d-none d-sm-table-cell text-info">
+                            @Html.DisplayFor(modelItem => item.Class.Name)
+                        </td>
+                        <td class="d-none d-xl-table-cell">
+                            @Html.DisplayFor(modelItem => item.Birthday)
+                        </td>
+                        <td class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayFor(modelItem => item.PenaltyLevel)
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="checkbox" type="checkbox"><i class="input-helper"></i>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="modal fade" id="modalpenaltyForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header text-center">
+                                            <h4 class="modal-title w-100 font-weight-bold">Penalty</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body mx-3">
+                                            <div class="form-check form-check-danger">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" class="form-check-input"> Cash <i class="input-helper"></i>
+                                                </label>
+                                            </div>
+                                            <div class="form-check form-check-danger">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" class="form-check-input"> Push Up <i class="input-helper"></i>
+                                                </label>
+                                            </div>
+                                            <div class="form-text mb-4">
+                                                <input type="text" class="form-control">
+                                                <label>New Cash rank</label>
+                                            </div>
+                                            <div class="form-text mb-4">
+                                                <input type="text" class="form-control">
+                                                <label>New Push up rank</label>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer d-flex justify-content-center">
+                                            <button class="btn btn-gradient-primary mr-2">Confirm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="button" class="btn btn-gradient-primary mr-2" data-toggle="modal" data-target="#modalpenaltyForm">Penalty</button>
+                            </div>
+                        </td>
+                    </tr>
+                            @*<a class="btn btn-link" href="@Url.Action("Edit", "Customers", new {id = item.Id})">
+                        <span class="mdi mdi-pencil-box-outline"></span>
+                    </a>
+                    <a class="btn btn-link" href="@Url.Action("Details", "Customers", new {id = item.Id})">
+                        <span class="mdi mdi-file-document"></span>
+                    </a>
+                    <a class="btn btn-link" href="@Url.Action("Delete", "Customers", new {id = item.Id})">
+                        <span class="mdi mdi-trash-can-outline"></span>
+                    </a>*@
+                }
+                </tbody>
+            </table>
+            <br/>
+            @if (totalPage > 1)
+            {
+                <b>Page @currentPage of @totalPage</b>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        @if (currentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a href="?className=@ViewBag.Name&page=1&limit=@(limit)@(currentPara)" aria-label="First">
+                                    <span aria-hidden="true">First</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a href="?className=@ViewBag.Name&page=@(currentPage - 1)&limit=@(limit)@(currentPara)" aria-label="Previous">
+                                    <span aria-hidden="true">Previous</span>
+                                </a>
+                            </li>
+                        }
+                        @if (currentPage > 2)
+                        {
+                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage - 2)&limit=@(limit)@(currentPara)">@(currentPage - 2)</a></li>
+                        }
+                        @if (currentPage > 1)
+                        {
+                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage - 1)&limit=@(limit)@(currentPara)">@(currentPage - 1)</a></li>
+                        }
+                        <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage)&limit=@(limit)@(currentPara)">@currentPage</a></li>
+                        @if (totalPage - currentPage > 0)
+                        {
+                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage + 1)&limit=@(limit)@(currentPara)">@(currentPage + 1)</a></li>
+                        }
+                        @if (totalPage - currentPage > 1)
+                        {
+                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage + 2)&limit=@(limit)@(currentPara)">@(currentPage + 2)</a></li>
+                        }
+                        @if (currentPage < totalPage)
+                        {
+                            <li class="page-item">
+                                <a href="?className=@ViewBag.Name&page=@(currentPage + 1)&limit=@(limit)@(currentPara)" aria-label="Next">
+                                    <span aria-hidden="true">Next</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a href="?className=@ViewBag.Name&page=@totalPage&limit=@(limit)@(currentPara)" aria-label="Next">
+                                    <span aria-hidden="true">Last</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
+
+</div>
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            // init start time and end time;
+            var startDate = new Date();
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            var endDate = new Date();
+
+            // check start and end parameter
+            const startPara = getParameterFromUrl('start');
+            if (startPara != null) {
+                startDate = new Date(startPara);
+            }
+            const endPara = getParameterFromUrl('end');
+            if (endPara != null) {
+                endDate = new Date(endPara);
+            }
+
+
+            // ReSharper disable once PossiblyUnassignedProperty
+            $('input[name="datefilter"]').daterangepicker({
+                autoUpdateInput: true,
+                startDate: startDate,
+                endDate: endDate,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+// ReSharper disable UnusedParameter
+
+            $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
+                const start = picker.startDate.format('YYYY-MM-DD');
+                const end = picker.endDate.format('YYYY-MM-DD');
+                window.location.href = window.location.href.split('?')[0] + '?start=' + start + '&end=' + end;
+            });
+
+            $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
+// ReSharper restore UnusedParameter
+                $(this).val("");
+            });
+
+            function getParameterFromUrl(parameter) {
+                const urlString = window.location.href;
+                const url = new URL(urlString);
+                return url.searchParams.get(parameter);
+            }
+        });
+        function selectedClass(itemOption) {
+            window.document.location.href = '/Classes/Attendance?className=' + itemOption.options[itemOption.selectedIndex].value;
+            var Name = itemOption.options[itemOption.selectedIndex].innerHTML;
+            $('className').val(className);
+
+        }
+        jQuery(document).ready(function ($) {
+            $("#accordion").find(".accordion-toggle").next().removeAttr("style").hide();
+            $("#accordion").find(".accordion-toggle").click(function(){
+                $(this).next().slideToggle("fast");
+                $(".accordion-content").not($(this).next()).slideUp("fast");
+                if($(this).find("span#accordionIcon").text()=="▼"){
+                    $(this).find("span#accordionIcon").text("▲");
+                }
+                else{
+                    $(this).find("span#accordionIcon").text("▼");
+                }
+            });
+        });
+    </script>
+}
