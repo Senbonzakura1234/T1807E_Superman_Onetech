@@ -132,22 +132,18 @@ namespace OneTech.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
-        //Search Student
-        public ActionResult Search(string search_value)
+        //Search Student by fullname
+        public ActionResult Search(string advanceFullname)
         {
             List<Student> List = new List<Student>();
-            if (search_value != null)
+            var predicate = PredicateBuilder.New<Student>(true);
+            if (advanceFullname != null)
             {
-                List = _db.Students.Where(delegate (Student student)
-                {
-                    if ((student.FullName).IndexOf((search_value), StringComparison.CurrentCultureIgnoreCase) >= 0)
-                        return true;
-                    else
-                        return false;
-                }).ToList();
+                predicate = predicate.Or(s => s.FullName.Contains(advanceFullname));
+                List = _db.Students.Where(predicate).ToList();
             }
             ViewBag.Categories = _db.Students.ToList();
-            ViewBag.SearchText = search_value;
+            ViewBag.advanceFullname = advanceFullname;
             return View("~/Views/Students/Index.cshtml", List);
         }
         protected override void Dispose(bool disposing)
