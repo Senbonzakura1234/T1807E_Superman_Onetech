@@ -13,7 +13,8 @@
                 <p class="card-description d-sm-flex">
                     <span class="text-muted text-small my-auto">Search Student with filter</span>
                     <br class="d-sm-none" />
-
+                    <input class="form-control mr-sm-2" type="text" name="search_value" placeholder="Search" aria-label="Search" value="@{if (ViewBag.SearchText != null) { @ViewBag.SearchText}}">
+                    <br class="d-sm-none"/>
 
                     <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilterStudent">
                         Clear filter
