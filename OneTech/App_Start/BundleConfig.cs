@@ -27,7 +27,9 @@ namespace OneTech
 
             bundles.Add(new ScriptBundle("~/bundles/mainJs").Include(
                 "~/Scripts/main.js"));
-
+            // bootstrap select
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-select-js").Include(
+                "~/Scripts/bootstrap-select.min.js"));
 
 
 

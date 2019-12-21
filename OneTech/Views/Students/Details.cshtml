@@ -15,7 +15,7 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">
-                    <b>Customer # @Html.DisplayFor(model => model.Id)</b>
+                    <b>Student # @Html.DisplayFor(model => model.Id)</b>
                 </h5>
                 <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.FullName): </b>
@@ -26,7 +26,7 @@
                     @Html.DisplayFor(model => model.StudentCode)
                 </p>
                 <p class="card-text">
-                    <b>@Html.DisplayNameFor(model => model.Class.Name): </b>
+                    <b>Class Name: </b>
                     @Html.DisplayFor(model => model.Class.Name)
                 </p>
                 <p class="card-text">
@@ -34,20 +34,12 @@
                     @Html.DisplayFor(model => model.Birthday)
                 </p>
                 <p class="card-text">
-                    <b>@Html.DisplayNameFor(model => model.CreatedAt): </b>
-                    @Html.DisplayFor(model => model.CreatedAt)
-                </p>
-                <p class="card-text">
-                    <b>@Html.DisplayNameFor(model => model.UpdatedAt): </b>
-                    @Html.DisplayFor(model => model.UpdatedAt)
-                </p>
-                <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.PenaltyLevel): </b>
                     @Html.DisplayFor(model => model.PenaltyLevel)
                 </p>
                 <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.OwedCash): </b>
-                    @Html.DisplayFor(model => model.OwedCash)
+                    $@Html.DisplayFor(model => model.OwedCash) 
                 </p>
                 <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.OwedPushUp): </b>
@@ -55,8 +47,9 @@
                 </p>
                 <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.StudentStatus): </b>
-                    @Html.DisplayFor(model => model.StudentStatus)
-                    <i class="mdi @(Model.StudentStatus == Student.StudentStatusEnum.Active ? "mdi-gender-male text-primary" : "mdi-gender-female text-danger")"></i>
+                    <span class="badge @(Model.StudentStatus == Student.StudentStatusEnum.Inactive ? "badge-gradient-secondary" : "badge-gradient-primary")">
+                        @Html.DisplayFor(model => model.StudentStatus)
+                    </span>
                 </p>
 
                 <div class="d-sm-flex">
@@ -83,11 +76,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure to completely delete this customer account?
+                Are you sure to completely delete this student account?
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                @using (Html.BeginForm("Delete", "Customers", FormMethod.Post))
+                @using (Html.BeginForm("Delete", "Students", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
                     @Html.HiddenFor(model => model.Id)

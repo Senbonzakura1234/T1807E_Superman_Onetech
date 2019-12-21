@@ -11,16 +11,16 @@
             <div class="card-body">
                 <h4 class="card-title">Advanced Search</h4>
                 <p class="card-description d-sm-flex">
-                    <span class="text-muted text-small my-auto">Search Customer with filter</span>
+                    <span class="text-muted text-small my-auto">Search Student with filter</span>
                     <br class="d-sm-none" />
 
 
-                    <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilterCustomer">
+                    <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilterStudent">
                         Clear filter
                     </button>
                 </p>
                 @using (Html.BeginForm("Index", "Students", FormMethod.Get,
-                    new { role = "search", id = "AdvanceSearchFormCustomer" }))
+                    new { role = "search", id = "AdvanceSearchFormStudent" }))
                 {
                     <div class="row">
                         <div class="col-lg-6">
@@ -54,16 +54,16 @@
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body table-responsive">
-                <h4 class="card-title">Customer</h4>
+                <h4 class="card-title">Student</h4>
                 <p class="card-description d-sm-flex">
-                    <span class="text-muted text-small my-auto">Click customer name to see detail</span>
+                    <span class="text-muted text-small my-auto">Click student name to see detail</span>
                     <br class="d-sm-none" />
 
                     <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
                         Create New <span class="mdi mdi-plus-circle"></span>
                     </a>
                 </p>
-                <table class="table" id="update-customer">
+                <table class="table" id="update-student">
                     <thead class="text-primary">
                         <tr>
                             <th>
@@ -73,7 +73,7 @@
                                 @Html.DisplayNameFor(model => model.FullName)
                             </th>
                             <th class="d-none d-sm-table-cell">
-                                @Html.DisplayNameFor(model => model.Class)
+                                Class Name
                             </th>
                             <th class="d-none d-xl-table-cell">
                                 @Html.DisplayNameFor(model => model.Birthday)
@@ -116,13 +116,13 @@
                                     </a>
                                 </td>
                             </tr>
-                            @*<a class="btn btn-link" href="@Url.Action("Edit", "Customers", new {id = item.Id})">
+                            @*<a class="btn btn-link" href="@Url.Action("Edit", "Students", new {id = item.Id})">
                                     <span class="mdi mdi-pencil-box-outline"></span>
                                 </a>
-                                <a class="btn btn-link" href="@Url.Action("Details", "Customers", new {id = item.Id})">
+                                <a class="btn btn-link" href="@Url.Action("Details", "Students", new {id = item.Id})">
                                     <span class="mdi mdi-file-document"></span>
                                 </a>
-                                <a class="btn btn-link" href="@Url.Action("Delete", "Customers", new {id = item.Id})">
+                                <a class="btn btn-link" href="@Url.Action("Delete", "Students", new {id = item.Id})">
                                     <span class="mdi mdi-trash-can-outline"></span>
                                 </a>*@
                         }
