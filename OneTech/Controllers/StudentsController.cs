@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -131,7 +132,24 @@ namespace OneTech.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        //Search Student
+        public ActionResult Search(string search_value)
+        {
+            List<Student> List = new List<Student>();
+            if (search_value != null)
+            {
+                List = _db.Students.Where(delegate (Student student)
+                {
+                    if ((student.FullName).IndexOf((search_value), StringComparison.CurrentCultureIgnoreCase) >= 0)
+                        return true;
+                    else
+                        return false;
+                }).ToList();
+            }
+            ViewBag.Categories = _db.Students.ToList();
+            ViewBag.SearchText = search_value;
+            return View("~/Views/Students/Index.cshtml", List);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
