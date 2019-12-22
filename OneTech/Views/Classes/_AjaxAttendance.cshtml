@@ -1,0 +1,134 @@
+﻿@using OneTech.Models
+@model List<OneTech.Models.Student>
+
+@{
+    Layout = null;
+}
+    <div class="card-body table-responsive">
+        <h4 class="card-title">Attendance</h4>
+        <p class="card-description d-sm-flex">
+            <span class="text-muted text-small my-auto" id="className">@ViewBag.advanceFullname Attendance</span>
+            <br class="d-sm-none" />
+            <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
+                Create New Student <span class="mdi mdi-plus-circle"></span>
+            </a>
+        </p>
+        <table class="table">
+            <thead class="text-primary">
+                <tr>
+                    <th>
+                        No
+                    </th>
+                    <th>
+                        FullName
+                    </th>
+                    <th class="text-center d-none d-sm-table-cell">
+                        Class
+                    </th>
+                    <th class="text-center d-none d-xl-table-cell">
+                        OwedCash
+                    </th>
+                    <th class="text-center d-none d-xl-table-cell">
+                        OwedPushUp
+                    </th>
+                    <th class="text-center d-none d-xl-table-cell">
+                        PenaltyLevel
+                    </th>
+                    <th class="text-center d-none d-lg-table-cell">
+                        OnTime
+                    </th>
+                    <th class="text-center d-none d-lg-table-cell">
+                        Penalty
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+
+                    <tr>
+                        <td>
+                            <b class="text-small">@(i + 1)</b>
+                        </td>
+
+                        <td>
+                            <a class="badge w-100 @(Model.ElementAt(i).StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
+                                            w-100" href="@Url.Action("Details", "Students", new {id = Model.ElementAt(i).Id})">
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).FullName)
+                            </a>
+                        </td>
+                        <td class="text-center d-none d-sm-table-cell text-info">
+                            @Html.DisplayFor(modelItem => Model.ElementAt(i).Class.Name)
+                        </td>
+                        <td class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedCash)
+                        </td>
+                        <td class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedPushUp)
+                        </td>
+                        <td class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayFor(modelItem => Model.ElementAt(i).PenaltyLevel)
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <label class="form-check form-check-label">
+                                    <input class="custom-checkbox" type="checkbox"><i class="input-helper"></i>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("Penalty", "Classes", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="modal fade" id="modalpenaltyForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+
+                                        <div class="modal-content">
+                                            <div class="modal-header text-center">
+                                                <h4 class="modal-title w-100 font-weight-bold">Penalty</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body mx-3">
+                                                <div class="form-check form-check-danger">
+                                                    <label class="form-check-label">
+                                                        <input type="radio" class="form-check-input"> Cash <i class="input-helper"></i>
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-danger">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input"> Push Up <i class="input-helper"></i>
+                                                    </label>
+                                                </div>
+                                                <div class="form-text mb-4">
+                                                    <input type="text" class="form-control">
+                                                    <label>New Cash rank</label>
+                                                </div>
+                                                <div class="form-text mb-4">
+                                                    <input type="text" class="form-control">
+                                                    <label>New Push up rank</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-center">
+
+                                                @Html.HiddenFor(Model => Model.ElementAt(i).Id)
+                                                <input type="submit" value="Confirm" class="btn btn-danger" />
+
+                                                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="text-center">
+                                <button type="button" class="btn btn-gradient-primary mr-2" data-toggle="modal" data-target="#modalpenaltyForm">Penalty</button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>

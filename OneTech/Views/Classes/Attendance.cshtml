@@ -3,262 +3,215 @@
 @model IEnumerable<OneTech.Models.Student>
 @{
     ViewBag.Title = "View";
-    var totalPage = ((int?)ViewBag.TotalPage).Value;
-    var currentPage = ((int?)ViewBag.CurrentPage).Value;
-    var limit = ((int?)ViewBag.Limit).Value;
     var currentPara = "&start=" + ViewBag.Start + "&end=" + ViewBag.End;
 
 }
-
-@*<ul>
-    .@foreach (var item in ViewBag.ClassList)
-    {
-        <li><a href="@Url.Action("Attendance","Classes",new {className=@item.Name})">@item.Name</a></li>
-    }
-</ul>*@
+@*<!--List of Class-->*@
 <div class="row" id="accordion">
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title accordion-toggle">List of Class<span id="accordionIcon">▼</span></h4>
-            <section class="card-description">
-                @using (Html.BeginForm("Attendance", "Classes", FormMethod.Get))
-                {
-                    @Html.DropDownList("List of Class", (IEnumerable<SelectListItem>)ViewBag.ClassList, new { @class = "form-control", onchange = "selectedClass(this)" })
-                }
-            </section>
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title accordion-toggle">List of Class<span id="accordionIcon">▼</span></h4>
+                <section class="card-description">
+                    @using (Html.BeginForm("Attendance", "Classes", FormMethod.Get))
+                    {
+                        @Html.DropDownList("listOfClassName", null, "-- Select Class --",new { @class = "form-control", onchange = "selectedClass(this)"})
+                    }
+                </section>
+            </div>
         </div>
     </div>
-</div>
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title accordion-toggle">Advanced Search<span id="accordionIcon">▼</span></h4>
-            <section class="card-description">
-                <p class="card-description d-sm-flex">
-                    <span class="text-muted text-small my-auto">Search Customer with filter</span>
-                    <br class="d-sm-none" />
-                    <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilterCustomer">
-                        Clear filter
-                    </button>
-                </p>
-                @using (Html.BeginForm("Index", "Students", FormMethod.Get,
-                    new { role = "search", id = "AdvanceSearchFormCustomer" }))
-                {
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="form-group mb-lg-0">
-                                <label for="advanceFullname">
-                                    <span class="text-small">Fullname</span>
-                                </label>
-                                <input id="advanceFullname" value="@ViewBag.advanceFullname" name="advanceFullname" type="text" class="form-control form-control-sm" />
-                            </div>
-                        </div>
+    @*<!--End List of Class-->*@
 
-                        <div class="col-lg-6">
-                            <div class="form-group mb-lg-0">
-                                @* ReSharper disable once Html.IdNotResolved *@
-                                <label for="datefilter">
-                                    <span class="text-small">Date filter</span>
-                                </label>
-                                <input type="text" name="datefilter" id="datefilter" value="" class="form-control form-control-sm" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 mt-3 text-right">
-                            <input type="submit" class="btn btn-primary btn-sm" value="Search" />
-                        </div>
-                    </div>
-                }
-            </section>
-            
-        </div>
-    </div>
-</div>
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body table-responsive">
-            <h4 class="card-title">Attendance</h4>
-            <p class="card-description d-sm-flex">
-                <span class="text-muted text-small my-auto" id="className">@ViewBag.Name Attendance</span>
-                <br class="d-sm-none"/>
-
-                <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
-                    Create New <span class="mdi mdi-plus-circle"></span>
-                </a>
-            </p>
-            <table class="table" id="update-customer">
-                <thead class="text-primary">
-                <tr>
-                    <th>
-                        #
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.FullName)
-                    </th>
-                    <th class="d-none d-sm-table-cell">
-                        @Html.DisplayNameFor(model => model.Class)
-                    </th>
-                    <th class="d-none d-xl-table-cell">
-                        @Html.DisplayNameFor(model => model.Birthday)
-                    </th>
-                    <th class="text-center d-none d-xl-table-cell">
-                        @Html.DisplayNameFor(model => model.PenaltyLevel)
-                    </th>
-                    <th class="text-center d-none d-lg-table-cell">
-                        OnTime
-                    </th>
-                    <th class="text-center d-none d-lg-table-cell">
-                        Penalty
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var item in Model)
-                {
-
-                    <tr>
-                        <td>
-                            <b class="text-small">@Html.DisplayFor(modelItem => item.Id)</b>
-                        </td>
-
-                        <td>
-                            <a class="badge w-100 @(item.StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
-                                            w-100" href="@Url.Action("Details", "Students", new {id = item.Id})">
-                                @Html.DisplayFor(modelItem => item.FullName)
-                            </a>
-                        </td>
-                        <td class="d-none d-sm-table-cell text-info">
-                            @Html.DisplayFor(modelItem => item.Class.Name)
-                        </td>
-                        <td class="d-none d-xl-table-cell">
-                            @Html.DisplayFor(modelItem => item.Birthday)
-                        </td>
-                        <td class="text-center d-none d-xl-table-cell">
-                            @Html.DisplayFor(modelItem => item.PenaltyLevel)
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                    <input class="checkbox" type="checkbox"><i class="input-helper"></i>
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="modal fade" id="modalpenaltyForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header text-center">
-                                            <h4 class="modal-title w-100 font-weight-bold">Penalty</h4>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body mx-3">
-                                            <div class="form-check form-check-danger">
-                                                <label class="form-check-label">
-                                                    <input type="checkbox" class="form-check-input"> Cash <i class="input-helper"></i>
-                                                </label>
-                                            </div>
-                                            <div class="form-check form-check-danger">
-                                                <label class="form-check-label">
-                                                    <input type="checkbox" class="form-check-input"> Push Up <i class="input-helper"></i>
-                                                </label>
-                                            </div>
-                                            <div class="form-text mb-4">
-                                                <input type="text" class="form-control">
-                                                <label>New Cash rank</label>
-                                            </div>
-                                            <div class="form-text mb-4">
-                                                <input type="text" class="form-control">
-                                                <label>New Push up rank</label>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer d-flex justify-content-center">
-                                            <button class="btn btn-gradient-primary mr-2">Confirm</button>
-                                        </div>
-                                    </div>
+    @*<!--Search-->*@
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title accordion-toggle">Advanced Search<span id="accordionIcon">▼</span></h4>
+                <section class="card-description">
+                    <p class="card-description d-sm-flex">
+                        <span class="text-muted text-small my-auto">Search Class with filter</span>
+                        <br class="d-sm-none" />
+                        <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilter">
+                            Clear filter
+                        </button>
+                    </p>
+                        @using (Html.BeginForm("Attendance", "Classes", FormMethod.Get,
+                            new { role = "search", id = "AdvanceSearchFormAttendance" }))
+                        {
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group mb-lg-0">
+                                    <label for="advanceFullname">
+                                        <span class="text-small">Name</span>
+                                    </label>
+                                    <input id="advanceFullname" value="@ViewBag.advanceFullname" name="advanceFullname" type="text" class="form-control form-control-sm" />
                                 </div>
                             </div>
-                            <div class="text-center">
-                                <button type="button" class="btn btn-gradient-primary mr-2" data-toggle="modal" data-target="#modalpenaltyForm">Penalty</button>
+
+                            <div class="col-lg-6">
+                                <div class="form-group mb-lg-0">
+                                    <label for="datefilter">
+                                        <span class="text-small">Date filter</span>
+                                    </label>
+                                    <input type="text" name="datefilter" id="datefilter" value="" class="form-control form-control-sm" />
+                                </div>
                             </div>
-                        </td>
-                    </tr>
-                            @*<a class="btn btn-link" href="@Url.Action("Edit", "Customers", new {id = item.Id})">
-                        <span class="mdi mdi-pencil-box-outline"></span>
-                    </a>
-                    <a class="btn btn-link" href="@Url.Action("Details", "Customers", new {id = item.Id})">
-                        <span class="mdi mdi-file-document"></span>
-                    </a>
-                    <a class="btn btn-link" href="@Url.Action("Delete", "Customers", new {id = item.Id})">
-                        <span class="mdi mdi-trash-can-outline"></span>
-                    </a>*@
-                }
-                </tbody>
-            </table>
-            <br/>
-            @if (totalPage > 1)
-            {
-                <b>Page @currentPage of @totalPage</b>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        @if (currentPage > 1)
-                        {
-                            <li class="page-item">
-                                <a href="?className=@ViewBag.Name&page=1&limit=@(limit)@(currentPara)" aria-label="First">
-                                    <span aria-hidden="true">First</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a href="?className=@ViewBag.Name&page=@(currentPage - 1)&limit=@(limit)@(currentPara)" aria-label="Previous">
-                                    <span aria-hidden="true">Previous</span>
-                                </a>
-                            </li>
-                        }
-                        @if (currentPage > 2)
-                        {
-                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage - 2)&limit=@(limit)@(currentPara)">@(currentPage - 2)</a></li>
-                        }
-                        @if (currentPage > 1)
-                        {
-                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage - 1)&limit=@(limit)@(currentPara)">@(currentPage - 1)</a></li>
-                        }
-                        <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage)&limit=@(limit)@(currentPara)">@currentPage</a></li>
-                        @if (totalPage - currentPage > 0)
-                        {
-                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage + 1)&limit=@(limit)@(currentPara)">@(currentPage + 1)</a></li>
-                        }
-                        @if (totalPage - currentPage > 1)
-                        {
-                            <li class="page-item"><a href="?className=@ViewBag.Name&page=@(currentPage + 2)&limit=@(limit)@(currentPara)">@(currentPage + 2)</a></li>
-                        }
-                        @if (currentPage < totalPage)
-                        {
-                            <li class="page-item">
-                                <a href="?className=@ViewBag.Name&page=@(currentPage + 1)&limit=@(limit)@(currentPara)" aria-label="Next">
-                                    <span aria-hidden="true">Next</span>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a href="?className=@ViewBag.Name&page=@totalPage&limit=@(limit)@(currentPara)" aria-label="Next">
-                                    <span aria-hidden="true">Last</span>
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            }
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mt-3 text-right">
+                                <input type="submit" class="btn btn-primary btn-sm" value="Search" />
+                            </div>
+                        </div>
+                    }
+                <div class="row">
+                    <div class="col-12 mt-3 text-left" id="update-classList">
+                    </div>
+                </div>
+                </section>
+
+            </div>
         </div>
     </div>
-</div>
+    @*<!--End of Search-->*@
 
-</div>
+    @*<!--List of Students-->*@
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card" id="update-attendance">
+            <div class="card-body table-responsive">
+                <h4 class="card-title">Attendance</h4>
+                <p class="card-description d-sm-flex">
+                    <span class="text-muted text-small my-auto" id="className">@ViewBag.advanceFullname Attendance</span>
+                    <br class="d-sm-none" />
+                    <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
+                        Create New Student <span class="mdi mdi-plus-circle"></span>
+                    </a>
+                </p>
+                <table class="table">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                No
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FullName)
+                            </th>
+                            <th class="text-center d-none d-sm-table-cell">
+                                @Html.DisplayNameFor(model => model.Class)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.OwedCash)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.OwedPushUp)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.PenaltyLevel)
+                            </th>
+                            <th class="text-center d-none d-lg-table-cell">
+                                OnTime
+                            </th>
+                            <th class="text-center d-none d-lg-table-cell">
+                                Penalty
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for (int i = 0; i < Model.Count(); i++)
+                    {
+
+                        <tr>
+                            <td>
+                                <b class="text-small">@(i + 1)</b>
+                            </td>
+
+                            <td>
+                                <a class="badge w-100 @(Model.ElementAt(i).StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
+                                            w-100" href="@Url.Action("Details", "Students", new {id = Model.ElementAt(i).Id})">
+                                    @Html.DisplayFor(modelItem => Model.ElementAt(i).FullName)
+                                </a>
+                            </td>
+                            <td class="text-center d-none d-sm-table-cell text-info">
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Class.Name)
+                            </td>
+                            <td class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedCash)
+                            </td>
+                            <td class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedPushUp)
+                            </td>
+                            <td class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).PenaltyLevel)
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <label class="form-check form-check-label">
+                                        <input class="custom-checkbox" type="checkbox"><i class="input-helper"></i>
+                                    </label>
+                                </div>
+                            </td>
+                            <td>
+                                @using (Html.BeginForm("Penalty", "Classes", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="modal fade" id="modalpenaltyForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+
+                                            <div class="modal-content">
+                                                <div class="modal-header text-center">
+                                                    <h4 class="modal-title w-100 font-weight-bold">Penalty</h4>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body mx-3">
+                                                    <div class="form-check form-check-danger">
+                                                        <label class="form-check-label">
+                                                            <input type="radio" class="form-check-input" name="penalty" value="Cash"> Cash <i class="input-helper"></i>
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-danger">
+                                                        <label class="form-check-label">
+                                                            <input type="radio" class="form-check-input" name="penalty" value="PushUp"> Push Up <i class="input-helper"></i>
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-text mb-4">
+                                                        <input type="text" class="form-control">
+                                                        <label>New Cash rank</label>
+                                                    </div>
+                                                    <div class="form-text mb-4">
+                                                        <input type="text" class="form-control">
+                                                        <label>New Push up rank</label>
+                                                    </div>
+                                                    @Html.HiddenFor(Model => Model.ElementAt(i).Id)
+                                                </div>
+                                                <div class="modal-footer d-flex justify-content-center">
+                                                    <input type="submit" value="Confirm" class="btn btn-danger" />
+                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-gradient-primary mr-2" data-toggle="modal" data-target="#modalpenaltyForm">Penalty</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+    @*<!--End List of Students-->*@
+
 @section scripts{
     <script type="text/javascript">
-        $(function () {
+        $(function() {
             // init start time and end time;
             var startDate = new Date();
             startDate.setFullYear(startDate.getFullYear() - 1);
@@ -284,18 +237,20 @@
                     cancelLabel: 'Clear'
                 }
             });
-// ReSharper disable UnusedParameter
+            // ReSharper disable UnusedParameter
 
-            $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
-                const start = picker.startDate.format('YYYY-MM-DD');
-                const end = picker.endDate.format('YYYY-MM-DD');
-                window.location.href = window.location.href.split('?')[0] + '?start=' + start + '&end=' + end;
-            });
+            $('input[name="datefilter"]').on('apply.daterangepicker',
+                function(ev, picker) {
+                    const start = picker.startDate.format('YYYY-MM-DD');
+                    const end = picker.endDate.format('YYYY-MM-DD');
+                    window.location.href = window.location.href.split('?')[0] + '?start=' + start + '&end=' + end;
+                });
 
-            $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
-// ReSharper restore UnusedParameter
-                $(this).val("");
-            });
+            $('input[name="datefilter"]').on('cancel.daterangepicker',
+                function(ev, picker) {
+                    // ReSharper restore UnusedParameter
+                    $(this).val("");
+                });
 
             function getParameterFromUrl(parameter) {
                 const urlString = window.location.href;
@@ -303,24 +258,87 @@
                 return url.searchParams.get(parameter);
             }
         });
+
         function selectedClass(itemOption) {
-            window.document.location.href = '/Classes/Attendance?className=' + itemOption.options[itemOption.selectedIndex].value;
-            var Name = itemOption.options[itemOption.selectedIndex].innerHTML;
-            $('className').val(className);
+            $.ajax({
+                type: "GET",
+                url: window.document.location.href = '/Classes/Attendance?className=' + itemOption.options[itemOption.selectedIndex].text,
+                success: function(data) {
+                    $("#update-attendance").off('change', selectedClass);
+                    $("#update-attendance").html(data);
+                }
+            });
 
         }
-        jQuery(document).ready(function ($) {
+
+        jQuery(document).ready(function($) {
+            //Toggle Card
             $("#accordion").find(".accordion-toggle").next().removeAttr("style").hide();
-            $("#accordion").find(".accordion-toggle").click(function(){
+            $("#accordion").find(".accordion-toggle").click(function() {
                 $(this).next().slideToggle("fast");
                 $(".accordion-content").not($(this).next()).slideUp("fast");
-                if($(this).find("span#accordionIcon").text()=="▼"){
+                if ($(this).find("span#accordionIcon").text() == "▼") {
                     $(this).find("span#accordionIcon").text("▲");
-                }
-                else{
+                } else {
                     $(this).find("span#accordionIcon").text("▼");
                 }
             });
+            //Clear Filter
+            $("#clearFilter").click(function() {
+                $("#advanceCheck").prop("checked", !1);
+                $("#advanceCheckValue").val(0);
+                $("input[name = 'advanceFullname']").val(null);
+            });
+            //
+            $("#AdvanceSearchFormAttendance").on("submit",
+                function(n) {
+                    n.preventDefault();
+                    var t = $("input[name = 'advanceFullname']").val();
+                    $.ajax({
+                        url: "/Classes/AjaxSearchClass",
+                        type: "GET",
+                        data: {
+                            advanceName: t
+                        },
+                        success: function(n) {
+                            $("#update-classList").html(n);
+                        },
+                        error: function(n, t, i) {
+                            alert(n.status);
+                            alert(i);
+                        }
+                    });
+                    $("html, body").animate({
+                            scrollTop: $("#goto").offset().top
+                        },
+                        1e3);
+                });
+            //Form Penalty
+            $("#AdvancePenalty").on("submit",
+                function(n) {
+                    n.preventDefault();
+                    const t = $("input[name = 'advanceFullname']").val(),
+                        i = $("input[name = 'advanceEmail']").val(),
+                        r = $("input[name = 'advanceAge']").val(),
+                        u = $("#advanceCheckValue").val();
+                    $.ajax({
+                        url: "/Customers/AjaxCustomers",
+                        type: "GET",
+                        data: {
+                            advanceFullname: t,
+                            advanceEmail: i,
+                            advanceAge: r,
+                            advanceCheckValue: u
+                        },
+                        success: function(n) {
+                            $("#update-customer").html(n);
+                        },
+                        error: function(n, t, i) {
+                            alert(n.status);
+                            alert(i);
+                        }
+                    });
+                });
         });
     </script>
 }

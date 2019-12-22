@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
+using System.Data.Entity.Core.Objects;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -143,10 +145,12 @@ namespace OneTech.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,CreatedAt,UpdatedAt,DeletedAt")] Class @class)
+        public ActionResult Create([Bind(Include = "Id,Name")] Class @class)
         {
             if (ModelState.IsValid)
             {
+                @class.CreatedAt = DateTime.Now;
+                @class.UpdatedAt = DateTime.Now;
                 db.Classes.Add(@class);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -175,13 +179,20 @@ namespace OneTech.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,UpdatedAt")] Class @class)
+        public ActionResult Edit([Bind(Include = "Id,Name")] Class @class)
         {
             if (ModelState.IsValid)
             {
                 @class.UpdatedAt = DateTime.Now;
                 db.Entry(@class).State = EntityState.Modified;
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (OptimisticConcurrencyException)
+                {
+                    Debug.WriteLine("error");
+                }
                 return RedirectToAction("Index");
             }
             return View(@class);
@@ -213,53 +224,46 @@ namespace OneTech.Controllers
             return RedirectToAction("Index");
         }
         //GET: Attendance
-        public ActionResult Attendance(string className, int? page, int? limit)
+        public ActionResult Attendance(string className)
         {
             if (className == null)
             {
-                className = "T1807E";
+                className = db.Classes.ToList().ElementAtOrDefault(1)?.Name;
             }
-            if (page == null)
+            //List of Student
+            var @class = db.Classes.FirstOrDefault(s=>s.Name.Contains(className));
+            if (@class != null)
             {
-                page = 1;
+                ViewBag.listOfClassName = new SelectList(db.Classes, "Id", "Name");
+                ViewBag.advanceFullname = @class.Name;
+                var listStudents = db.Students.Where(x => x.ClassId == @class.Id).OrderByDescending(s => s.CreatedAt).ToList();
+                return Request.IsAjaxRequest() ? (ActionResult)PartialView("_AjaxAttendance", listStudents) : View(listStudents);
             }
-
-            if (limit == null)
-            {
-                limit = 10;
-            }
-            //Send to sidebar list class
-            List<Class> listClass = db.Classes.ToList();
-            SelectList classList = new SelectList(listClass, "Name","Name","Name");
-            ViewBag.ClassList = classList;
-            ViewBag.Name = className;
-            //pagination
-            var @class = db.Classes.FirstOrDefault(x => x.Name.Contains(className));
-            var listStudents = db.Students.Where(x => x.ClassId == @class.Id).OrderByDescending(s => s.CreatedAt);
-            ViewBag.limit = limit;
-            ViewBag.TotalPage = Math.Ceiling((double)listStudents.Count() / limit.Value);
-            ViewBag.CurrentPage = page;
-            ViewBag.Limit = limit;
-            var listStudentsPagination = listStudents.Skip((page.Value - 1) * limit.Value).Take(limit.Value).ToList();
-            return View(listStudentsPagination);
+            return View();
         }
-
-        public ActionResult Penalty(string studentCode, Penalty.PenaltyEnum penaltyEnum, int? penaltyRank )
+        public ActionResult AjaxSearchClass(string advanceName)
         {
-            var student = db.Students.FirstOrDefault(s=>s.StudentCode.Contains(studentCode));
-            var data = db.Students.Where(s => s.StudentStatus != Student.StudentStatusEnum.Deleted)
-                .GroupBy(
-                    s => new
-                    {
-                        Year = s.CreatedAt.Year,
-                        Month = s.CreatedAt.Month,
-                        Day = s.CreatedAt.Day
-                    }
-                ).Select(s => new
-                {
-                    Date = s.FirstOrDefault().CreatedAt,
-                    Count = s.Count()
-                }).OrderBy(s => s.Date).ToList();
+            var predicate = PredicateBuilder.New<Class>(true);
+            //predicate = predicate.And(f => f.ProductStatus != Product.ProductStatusEnum.Deleted);
+           // Debug.WriteLine(advanceBrand);
+            if (!string.IsNullOrEmpty(advanceName))
+            {
+                Debug.WriteLine("okay");
+                predicate = predicate.And(f => f.Name.Contains(advanceName));
+                ViewBag.advanceName = advanceName;
+            }
+            var data = db.Classes.AsExpandable().Where(predicate);
+            var lsProducts = new List<Class>();
+            foreach (var item in data)
+            {
+                lsProducts.Add(item);
+            }
+            return PartialView("_AjaxSearchClass", lsProducts);
+        }
+        
+        public ActionResult Penalty(int? id, Penalty.PenaltyEnum penaltyEnum, int? penaltyRank )
+        {
+            var student = db.Students.Find(id);
             if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
             {
                 return Redirect("Attendance");

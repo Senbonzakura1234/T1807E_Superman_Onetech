@@ -14,7 +14,6 @@
         <div class="card">
             <div class="card-body">
                 <h2>Index</h2>
-
                 <p>
                     @Html.ActionLink("Create New", "Create")
                 </p>
@@ -113,7 +112,7 @@
                                     @Html.DisplayFor(modelItem => item.CreatedAt)
                                 </td>
                                 <td class="text-center d-none d-lg-table-cell">
-                                    <a class="badge badge-warning" href="@Url.Action("Edit", "Students", new {id = item.Id})">
+                                    <a class="badge badge-warning" href="@Url.Action("Edit", "Classes", new {id = item.Id})">
                                         <span class="mdi mdi-pencil-box-outline"></span>
                                     </a>
                                 </td>
@@ -178,6 +177,16 @@
         </ul>
     </nav>
 }
+
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h2>
+                @Html.ActionLink("Attendance", "Attendance")
+            </h2>
+        </div>
+    </div>
+</div>
 @section scripts{
     <script type="text/javascript">
         $(function () {

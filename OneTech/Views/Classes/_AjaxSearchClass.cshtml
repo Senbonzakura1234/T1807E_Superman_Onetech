@@ -1,0 +1,15 @@
+﻿@model System.Collections.Generic.List<OneTech.Models.Class>
+@{
+    Layout = null;
+}
+
+<div class="col-12 mt-3 text-left">
+    @foreach (var item in Model)
+    {
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="@Url.Action("Attendance", "Classes", new {className = @item.Name})">@item.Name</a>
+            </li>
+        </ul>
+    }
+</div>
