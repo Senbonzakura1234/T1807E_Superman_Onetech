@@ -17,11 +17,70 @@
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
-}
+
 .navbar.fixed-top + .page-body-wrapper {
     padding-top: 0 !important;
+}
+.search-option-select .dropdown-item.active.selected {
+    background: #9d3aff;
+}
+
+.search-option-select .dropdown-item {
+    color: #16181b;
+}
+
+.search-option-select .dropdown-item:hover {
+    color: #16181b !important;
+}
+
+.search-option-select .selected.active .dropdown-item.active.selected {
+    color: #fff !important;
+}
+
+.select-option-btn {
+    outline: none !important;
+    outline-color: transparent !important;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: 1px solid #9d3aff !important;
+    color: #9d3aff !important;
+}
+
+.select-option-btn:focus,
+.select-option-btn:active,
+.select-option-btn-desktop:focus,
+.select-option-btn-desktop:active {
+    outline: none !important;
+    outline-color: transparent !important;
+}
+
+.select-option-btn-desktop {
+    outline: none !important;
+    outline-color: transparent !important;
+    padding-left: 15px;
+    padding-right: 15px;
+    border: none !important;
+    color: #9d3aff !important;
+    width: 140px !important;
+}
+
+.search-option-select .dropdown-menu {
+    margin-top: 0 !important;
+}
+
+.search-option-select .dropdown-menu.inner .text {
+    font-size: 12px;
+}
+
+#search-form-submit {
+    cursor: pointer;
+}
+
+.bootstrap-select > select.mobile-device:focus + .dropdown-toggle, .bootstrap-select .dropdown-toggle:focus {
+    outline: none !important;
+    outline-color: transparent !important;
+}
+
+a {
+    text-decoration: none !important;
 }
