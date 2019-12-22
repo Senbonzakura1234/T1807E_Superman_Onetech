@@ -40,6 +40,9 @@
                                 <input type="text" name="datefilter" id="datefilter" value="" class="form-control form-control-sm" />
                             </div>
                         </div>
+                        <input type="hidden" value="@{if (ViewBag.advanceStart != null) { @ViewBag.advanceStart}}" name="start" id="startDate"/>
+                        <input type="hidden" value="@{if (ViewBag.advanceEnd != null) { @ViewBag.advanceEnd}}" name="end" id="endDate"/>
+                        <input type="hidden" name="similar" id="similarDate"/>
                     </div>
                     <div class="row">
                         <div class="col-12 mt-3 text-right">
@@ -103,8 +106,9 @@
                                 <td class="d-none d-sm-table-cell text-info">
                                     @Html.DisplayFor(modelItem => item.Class.Name)
                                 </td>
-                                <td class="d-none d-xl-table-cell">
-                                    @Html.DisplayFor(modelItem => item.Birthday)
+                                <td class="d-none d-xl-table-cell ">
+                                    @* ReSharper disable once Html.IdNotResolved *@
+                                    <a href="#/" class="birth-day badge w-100 badge-gradient-info">@Html.DisplayFor(modelItem => item.Birthday)</a>
                                 </td>
                                 <td class="text-center d-none d-xl-table-cell">
                                     @Html.DisplayFor(modelItem => item.PenaltyLevel)
@@ -137,20 +141,20 @@
         $(function () {
             // init start time and end time;
             var startDate = new Date();
-            startDate.setFullYear(startDate.getFullYear() - 1);
             var endDate = new Date();
+            const startPara = $("#startDate").val();  
+            const endPara = $("#endDate").val();
+            function isEmptyOrSpaces(str){
+// ReSharper disable once QualifiedExpressionMaybeNull
+                return str === null || str.match(/^ *$/) !== null;
+            }
 
-            // check start and end parameter
-            const startPara = getParameterFromUrl('start');
-            if (startPara != null) {
+            if (startPara.length !== 0 || !isEmptyOrSpaces(startPara)) {
                 startDate = new Date(startPara);
             }
-            const endPara = getParameterFromUrl('end');
-            if (endPara != null) {
+            if (endPara .length !== 0 || !isEmptyOrSpaces(endPara)) {
                 endDate = new Date(endPara);
             }
-
-
             // ReSharper disable once PossiblyUnassignedProperty
             $('input[name="datefilter"]').daterangepicker({
                 autoUpdateInput: true,
@@ -160,25 +164,32 @@
                     cancelLabel: 'Clear'
                 }
             });
-// ReSharper disable UnusedParameter
+
 
             $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
                 const start = picker.startDate.format('YYYY-MM-DD');
                 const end = picker.endDate.format('YYYY-MM-DD');
-                window.location.href = window.location.href.split('?')[0] + '?start=' + start + '&end=' + end;
+                console.log(start);
+                console.log(end);
+                $("#startDate").val(start);
+                $("#endDate").val(end);
+                $("#AdvanceSearchFormStudent").submit();
             });
 
             $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
 // ReSharper restore UnusedParameter
                 $(this).val("");
+                $("#endDate").val("");
+                $("#startDate").val("");
+                $("#AdvanceSearchFormStudent").submit();
+            });
+            $(".birth-day").click(function () {
+                const date = $(this).text();
+                console.log(date);
+                $("#similarDate").val(date);
+                $("#AdvanceSearchFormStudent").submit();
             });
 
-
-            function getParameterFromUrl(parameter) {
-                const urlString = window.location.href;
-                const url = new URL(urlString);
-                return url.searchParams.get(parameter);
-            }
         });
     </script>
 }

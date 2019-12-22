@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -14,10 +13,36 @@ namespace OneTech.Controllers
         private readonly MyContext _db = new MyContext();
 
         // GET: Students
-        public ActionResult Index()
+        public ActionResult Index(string advanceFullname, string start, string end, string similar)
         {
+            
             var predicate = PredicateBuilder.New<Student>(true);
             predicate = predicate.And(f => f.StudentStatus != Student.StudentStatusEnum.Deleted);
+            if (!string.IsNullOrEmpty(advanceFullname) && !string.IsNullOrWhiteSpace(advanceFullname))
+            {
+                predicate = predicate.And(f => f.FullName.Contains(advanceFullname));
+                ViewBag.advanceFullname = advanceFullname;
+            }
+
+            if (!string.IsNullOrEmpty(start) && !string.IsNullOrWhiteSpace(start) &&
+                !string.IsNullOrEmpty(end) && !string.IsNullOrWhiteSpace(end))
+            {
+                var startDate = DateTime.ParseExact(start, "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture);
+                var endDate = DateTime.ParseExact(end, "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture);
+                predicate = predicate.And(f => f.Birthday <= endDate && f.Birthday >= startDate);
+                ViewBag.advanceStart = start;
+                ViewBag.advanceEnd = end;
+            }
+            if (!string.IsNullOrEmpty(similar))
+            {
+                var similarDate = DateTime.ParseExact(similar, "yyyy-MM-dd",
+                    System.Globalization.CultureInfo.InvariantCulture).Year;
+                var startDate = new DateTime(similarDate, 1,1);
+                var endDate = new DateTime(similarDate, 12, 31);
+                predicate = predicate.And(f => f.Birthday <= endDate && f.Birthday >= startDate);
+            }
             var data = _db.Students.AsExpandable().Where(predicate);
             return View(data);
         }
@@ -132,20 +157,7 @@ namespace OneTech.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
-        //Search Student by fullname
-        public ActionResult Search(string advanceFullname)
-        {
-            List<Student> List = new List<Student>();
-            var predicate = PredicateBuilder.New<Student>(true);
-            if (advanceFullname != null)
-            {
-                predicate = predicate.Or(s => s.FullName.Contains(advanceFullname));
-                List = _db.Students.Where(predicate).ToList();
-            }
-            ViewBag.Categories = _db.Students.ToList();
-            ViewBag.advanceFullname = advanceFullname;
-            return View("~/Views/Students/Index.cshtml", List);
-        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
