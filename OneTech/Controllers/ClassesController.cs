@@ -263,41 +263,47 @@ namespace OneTech.Controllers
         
         public ActionResult Penalty(FormCollection data)
         {
-             Debug.WriteLine(data);
-             return null;
-            //var student = db.Students.Find(id);
-            //if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
-            //{
-            //    return Redirect("Attendance");
-            //}
-            //var penaltyLevel = student.PenaltyLevel + 1;
-            //db.Students.Add(student);
-            //db.SaveChanges();
-            //Models.Penalty penalty = new Penalty();
-            //if (penaltyRank == null && penalty == (Penalty.PenaltyEnum) 1)
-            //{
-            //    penaltyRank = 10;
-            //    student.PenaltyLevel += 1;
-            //    penalty.StudentId = student.Id;
-            //    penalty.CreatedAt = DateTime.Now;
-            //    penalty.PenaltyType = penaltyEnum;
-            //    penalty.PenaltyPushUp = (int) penaltyRank* penaltyLevel;
-            //}
-            //else
-            //{
-            //    penaltyRank = 10000;
-            //    student.PenaltyLevel += 1;
-            //    penalty.StudentId = student.Id;
-            //    penalty.CreatedAt = DateTime.Now;
-            //    penalty.PenaltyType = penaltyEnum;
-            //    penalty.PenaltyCash = (double) penaltyRank* penaltyLevel;
-            //}
-            //Debug.WriteLine(penalty);
-            //ViewBag.penalty = penalty;
-            //db.Penalties.Add(penalty);
-            //db.SaveChanges();
+            if (ModelState.IsValid)
+            {
+                
+                    //Response.Write("Key=" + key + " ");
+                    //Response.Write("Value=" + data[key]);
+                    //Response.Write("<br/>");
+                    //Debug.WriteLine(data["Id"]);
+                    var student = db.Students.Find(Int32.Parse(data["Id"]));
+                    if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
+                    {
+                        return Redirect("Attendance");
+                    }
+                    var penaltyLevel = student.PenaltyLevel + 1;
+                    db.Students.Add(student);
+                    db.SaveChanges();
+                    Models.Penalty penalty = new Penalty();
+                    if (data["NewCashRank"] == null || Int32.Parse(data["penalty"]) == 0)
+                    {
+                        student.PenaltyLevel += 1;
+                        penalty.StudentId = student.Id;
+                        penalty.CreatedAt = DateTime.Now;
+                        penalty.PenaltyType = (Penalty.PenaltyEnum) 0;
+                        penalty.PenaltyCash = (int)10000 * penaltyLevel;
+                    }
+                    else
+                    {
+                        student.PenaltyLevel += 1;
+                        penalty.StudentId = student.Id;
+                        penalty.CreatedAt = DateTime.Now;
+                        penalty.PenaltyType = (Penalty.PenaltyEnum) 1;
+                        penalty.PenaltyCash = (double)10 * penaltyLevel;
+                    }
+                    Debug.WriteLine(penalty);
+                    ViewBag.penalty = penalty;
+                    db.Penalties.Add(penalty);
+                    db.SaveChanges();
+                
+                return Redirect("Attendance");
+            }
+            return null;
 
-            return Redirect("Attendance");
         }
         protected override void Dispose(bool disposing)
         {

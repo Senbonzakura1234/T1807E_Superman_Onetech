@@ -168,12 +168,12 @@
                                                 <div class="modal-body mx-3">
                                                     <div class="form-check form-check-danger">
                                                         <label class="form-check-label">
-                                                            <input type="radio" class="form-check-input" name="penalty" value="Cash"> Cash <i class="input-helper"></i>
+                                                            <input type="radio" class="form-check-input" name="penalty" value="0"> Cash <i class="input-helper"></i>
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-danger">
                                                         <label class="form-check-label">
-                                                            <input type="radio" class="form-check-input" name="penalty" value="PushUp"> Push Up <i class="input-helper"></i>
+                                                            <input type="radio" class="form-check-input" name="penalty" value="1"> Push Up <i class="input-helper"></i>
                                                         </label>
                                                     </div>
                                                     <div class="form-text mb-4">
@@ -264,12 +264,14 @@
                 type: "GET",
                 url: window.document.location.href = '/Classes/Attendance?className=' + itemOption.options[itemOption.selectedIndex].text,
                 success: function(data) {
-                    $("#update-attendance").off('change', selectedClass);
+                    //$("#update-attendance").off('change', selectedClass);
                     $("#update-attendance").html(data);
+                    //$("#update-attendance").on('change', selectedClass);
                 }
             });
 
         }
+        
 
         jQuery(document).ready(function($) {
             //Toggle Card
