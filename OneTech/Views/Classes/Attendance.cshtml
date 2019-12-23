@@ -89,32 +89,32 @@
                 </p>
                 <table class="table">
                     <thead class="text-primary">
-                        <tr>
-                            <th>
-                                No
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.FullName)
-                            </th>
-                            <th class="text-center d-none d-sm-table-cell">
-                                @Html.DisplayNameFor(model => model.Class)
-                            </th>
-                            <th class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayNameFor(model => model.OwedCash)
-                            </th>
-                            <th class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayNameFor(model => model.OwedPushUp)
-                            </th>
-                            <th class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayNameFor(model => model.PenaltyLevel)
-                            </th>
-                            <th class="text-center d-none d-lg-table-cell">
-                                OnTime
-                            </th>
-                            <th class="text-center d-none d-lg-table-cell">
-                                Penalty
-                            </th>
-                        </tr>
+                    <tr>
+                        <th>
+                            No
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FullName)
+                        </th>
+                        <th class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayNameFor(model => model.OwedCash)
+                        </th>
+                        <th class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayNameFor(model => model.OwedPushUp)
+                        </th>
+                        <th class="text-center d-none d-xl-table-cell">
+                            @Html.DisplayNameFor(model => model.PenaltyLevel)
+                        </th>
+                        <th class="text-center d-none d-lg-table-cell">
+                            Id
+                        </th>
+                        <th class="text-center d-none d-lg-table-cell">
+                            Attendance
+                        </th>
+                        <th class="text-center d-none d-lg-table-cell">
+                            Penalty
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
                     @for (int i = 0; i < Model.Count(); i++)
@@ -131,9 +131,6 @@
                                     @Html.DisplayFor(modelItem => Model.ElementAt(i).FullName)
                                 </a>
                             </td>
-                            <td class="text-center d-none d-sm-table-cell text-info">
-                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Class.Name)
-                            </td>
                             <td class="text-center d-none d-xl-table-cell">
                                 @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedCash)
                             </td>
@@ -143,66 +140,31 @@
                             <td class="text-center d-none d-xl-table-cell">
                                 @Html.DisplayFor(modelItem => Model.ElementAt(i).PenaltyLevel)
                             </td>
-                            <td>
-                                <div class="form-check">
-                                    <label class="form-check form-check-label">
-                                        <input class="custom-checkbox" type="checkbox"><i class="input-helper"></i>
-                                    </label>
-                                </div>
+                            <td class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Id)
                             </td>
                             <td>
-                                @using (Html.BeginForm("Penalty", "Classes", FormMethod.Post))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="modalpenaltyForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-
-                                            <div class="modal-content">
-                                                <div class="modal-header text-center">
-                                                    <h4 class="modal-title w-100 font-weight-bold">Penalty</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body mx-3">
-                                                    <div class="form-check form-check-danger">
-                                                        <label class="form-check-label">
-                                                            <input type="radio" class="form-check-input" name="penalty" value="0"> Cash <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check form-check-danger">
-                                                        <label class="form-check-label">
-                                                            <input type="radio" class="form-check-input" name="penalty" value="1"> Push Up <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-text mb-4">
-                                                        <input type="text" class="form-control" name="NewCashRank">
-                                                        <label>New Cash rank</label>
-                                                    </div>
-                                                    <div class="form-text mb-4">
-                                                        <input type="text" class="form-control" name="NewPushRank">
-                                                        <label>New Push up rank</label>
-                                                    </div>
-                                                    @Html.HiddenFor(Model => Model.ElementAt(i).Id)
-                                                </div>
-                                                <div class="modal-footer d-flex justify-content-center">
-                                                    <input type="submit" value="Confirm" class="btn btn-danger" />
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-gradient-primary mr-2" data-toggle="modal" data-target="#modalpenaltyForm">Penalty</button>
-                                </div>
+                                <select name="penalty">
+                                    <option value="0">On Time</option>
+                                    <option value="1">Penalty</option>
+                                </select>
                             </td>
+                            <td>
+                                <select name="penaltyType">
+                                    <option value="0">Cash</option>
+                                    <option value="1">Push up</option>
+                                </select>
+                            </td>
+
                         </tr>
                     }
                     </tbody>
                 </table>
+                <br/>
+                <p class="card-description d-sm-flex">
+                    <input class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" id="btnSave" type="button" value="Save" />
+                </p>
+                    
             </div>
         </div>
     </div>
@@ -316,28 +278,37 @@
                         1e3);
                 });
             //Form Penalty
-            $("#AdvancePenalty").on("submit",
-                function(n) {
-                    n.preventDefault();
-                    const t = $("input[name = 'advanceFullname']").val(),
-                        i = $("input[name = 'advanceEmail']").val(),
-                        r = $("input[name = 'advanceAge']").val(),
-                        u = $("#advanceCheckValue").val();
+            
+                $("#btnSave").click(function () {
+                    var attendancelist = [];
+
+                    //get cell values, instead of the header text.
+                    $("table tr:not(:first)").each(function() {
+                        var tdlist = $(this).find("td");
+                        var Item = {
+                            FullName: $(tdlist[1]).children().html(),
+                            OwedCash: $(tdlist[2]).html(),
+                            OwedPushUp: $(tdlist[3]).html(),
+                            PenaltyLevel: $(tdlist[4]).html(),
+                            Id: $(tdlist[5]).html(),
+                            penalty: $(tdlist[6]).children().val(),
+                            penaltyType: $(tdlist[7]).children().val()
+                        };
+                        attendancelist.push(Item);
+                    });
+
                     $.ajax({
-                        url: "/Customers/AjaxCustomers",
-                        type: "GET",
-                        data: {
-                            advanceFullname: t,
-                            advanceEmail: i,
-                            advanceAge: r,
-                            advanceCheckValue: u
+                        url: '@Url.Action("Penalty", "Classes")', 
+                        dataType: "json",
+                        data: JSON.stringify({ attendances: attendancelist }),
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (result) {
+                            result.forEach(e => alert(e.FullName+'bị phạt'));
+                            console.log(result);
                         },
-                        success: function(n) {
-                            $("#update-customer").html(n);
-                        },
-                        error: function(n, t, i) {
-                            alert(n.status);
-                            alert(i);
+                        error: function (xhr) {
+                            alert("error");
                         }
                     });
                 });

@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using LinqKit;
 using Microsoft.Ajax.Utilities;
+using Newtonsoft.Json;
 using OneTech.Models;
 
 namespace OneTech.Controllers
@@ -261,49 +262,68 @@ namespace OneTech.Controllers
             return PartialView("_AjaxSearchClass", lsProducts);
         }
         
-        public ActionResult Penalty(FormCollection data)
+        public JsonResult Penalty(Attendance[] attendances)
         {
-            if (ModelState.IsValid)
+            List<Attendance> att = new List<Attendance>();
+            foreach (var i in attendances)
             {
-                
-                    //Response.Write("Key=" + key + " ");
-                    //Response.Write("Value=" + data[key]);
-                    //Response.Write("<br/>");
-                    //Debug.WriteLine(data["Id"]);
-                    var student = db.Students.Find(Int32.Parse(data["Id"]));
-                    if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
-                    {
-                        return Redirect("Attendance");
-                    }
-                    var penaltyLevel = student.PenaltyLevel + 1;
-                    db.Students.Add(student);
-                    db.SaveChanges();
-                    Models.Penalty penalty = new Penalty();
-                    if (data["NewCashRank"] == null || Int32.Parse(data["penalty"]) == 0)
-                    {
-                        student.PenaltyLevel += 1;
-                        penalty.StudentId = student.Id;
-                        penalty.CreatedAt = DateTime.Now;
-                        penalty.PenaltyType = (Penalty.PenaltyEnum) 0;
-                        penalty.PenaltyCash = (int)10000 * penaltyLevel;
-                    }
-                    else
-                    {
-                        student.PenaltyLevel += 1;
-                        penalty.StudentId = student.Id;
-                        penalty.CreatedAt = DateTime.Now;
-                        penalty.PenaltyType = (Penalty.PenaltyEnum) 1;
-                        penalty.PenaltyCash = (double)10 * penaltyLevel;
-                    }
-                    Debug.WriteLine(penalty);
-                    ViewBag.penalty = penalty;
-                    db.Penalties.Add(penalty);
-                    db.SaveChanges();
-                
-                return Redirect("Attendance");
+                Attendance attendance = new Attendance
+                {
+                    Id = i.Id,
+                    Penalty = i.Penalty,
+                    OwedCash = i.OwedCash,
+                    OwedPushUp = i.OwedPushUp,
+                    PenaltyLevel = i.PenaltyLevel,
+                    PenaltyType = i.PenaltyType,
+                    FullName = i.FullName
+                };
+                //loop through the array and insert value into database.
+                //STUDENTS
+                var student = db.Students.Find(attendance.Id);
+                if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
+                {
+                    return Json("false");
+                }
+                //Student result = db.Students.SingleOrDefault(p => p.Id == student.Id);
+                if (student.PenaltyLevel < 3)
+                {
+                    student.PenaltyLevel += 1;
+                }
+                else
+                {
+                    student.PenaltyLevel = 1;
+                }
+                attendance.PenaltyLevel = student.PenaltyLevel;
+                db.SaveChanges();
+                //PENALTIES
+                Models.Penalty penalty = new Penalty();
+                if (attendance.PenaltyType == 0 )
+                {
+                    penalty.StudentId = student.Id;
+                    penalty.CreatedAt = DateTime.Now;
+                    penalty.PenaltyType = (Penalty.PenaltyEnum)0;
+                    penalty.PenaltyCash = (int)10000 * student.PenaltyLevel;
+                    attendance.OwedCash += penalty.PenaltyCash;
+                }
+                else
+                {
+                    penalty.StudentId = student.Id;
+                    penalty.CreatedAt = DateTime.Now;
+                    penalty.PenaltyType = (Penalty.PenaltyEnum)1;
+                    penalty.PenaltyPushUp = 10 * student.PenaltyLevel;
+                    attendance.OwedPushUp += penalty.PenaltyPushUp;
+                }
+                if (attendance.Penalty == 1)
+                {
+                    att.Add(attendance);
+                }
+                Debug.WriteLine(attendance);
+                ViewBag.penalty = penalty;
+                db.Penalties.Add(penalty);
+                db.SaveChanges();
             }
-            return null;
-
+            
+            return Json(att, JsonRequestBehavior.AllowGet);
         }
         protected override void Dispose(bool disposing)
         {
