@@ -1,0 +1,249 @@
+﻿@using OneTech.Models
+@model IEnumerable<OneTech.Models.Student>
+@{
+    ViewBag.Title = "View";
+    var i = 0;
+}
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body table-responsive">
+                <h4 class="card-title">Attendance</h4>
+                <table class="table">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FullName)
+                            </th>
+                            <th class="d-none d-sm-table-cell">
+                                Class Name
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.PenaltyLevel)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                Attendance Status
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            i++;
+                            <tr>
+                                <td>
+                                    <b class="text-small">@i</b>
+                                </td>
+
+                                <td>
+                                    <a class="badge w-100 @(item.StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
+                                            w-100" href="@Url.Action("Details", "Students", new {id = item.Id})">
+                                        @Html.DisplayFor(modelItem => item.FullName)
+                                    </a>
+                                </td>
+                                <td class="d-none d-sm-table-cell text-info">
+                                    @Html.DisplayFor(modelItem => item.Class.Name)
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    @Html.DisplayFor(modelItem => item.PenaltyLevel)
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal" data-whatever="@item.Id">
+                                        Confirm
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-white">
+            <div class="modal-header border-0">
+                <h4 class="modal-title" id="exampleModalLabel">Confirm</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" name="studentId" id="studentId"/>
+                    <input type="hidden" name="penaltyLevel" id="penaltyLevel"/>
+                    <div class="form-group">
+                        <label for="attendanceStatus">Attendance Status</label>
+
+                        <select class="form-control" id="attendanceStatus" name="attendanceStatus">
+                            <option value="0">On time</option>
+                            <option value="1">Late</option>
+                            <option value="2">Absent</option>
+                            <option value="0">Late (pre-notice)</option>
+                            <option value="0">Absent (pre-notice)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="penaltyType">Penalty Type</label>
+
+                        <select class="form-control" name="penaltyType" id="penaltyType">
+                            <option value="0">Cash</option>
+                            <option value="1">Push up</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentPenaltyLevel">Current Penalty Level</label>
+                        <input type="text" class="form-control" name="currentPenaltyLevel" id="currentPenaltyLevel" readonly="readonly"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="OwedCash">Owe Money</label>
+                        <input type="text" class="form-control" name="OwedCash" id="OwedCash" readonly="readonly"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="OwedPushUp">Owe PushUp</label>
+                        <input type="text" class="form-control" name="OwedPushUp" id="OwedPushUp" readonly="readonly"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary confirm-btn" data-dismiss="modal">Confirm</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                @*@using (Html.BeginForm("", "", null))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => item.Id)
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        }*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            var listPenalty = (function() {
+                // =============================
+                // Private methods and propeties
+                // =============================
+                var list = [];
+
+                // Constructor
+                function Penalty(id, penaltyType, penaltyCash, penaltyPushUp) {
+                    this.id = id;
+                    this.penaltyType = penaltyType;
+                    this.penaltyCash = penaltyCash;
+                    this.penaltyPushUp = penaltyPushUp;
+                }
+
+
+
+                // =============================
+                // Public methods and propeties
+                // =============================
+                const obj = {};
+
+                // Add to cart
+                obj.addPenaltyToList = function(id, penaltyType, penaltyCash, penaltyPushUp) {
+                    var item;
+                    for (item in list) {
+                        if (list.hasOwnProperty(item)) {
+                            if (list[item].id === id) {
+                                list[item].count++;
+                                return;
+                            }
+                        }
+                    }
+                    item = new Penalty(id, penaltyType, penaltyCash, penaltyPushUp);
+                    console.log(item);
+                    list.push(item);
+                };
+                // Remove item from cart
+                obj.removePenaltyFromList = function(id) {
+                    for (let item in list) {
+                        if (list.hasOwnProperty(item)) {
+                            if (list[item].id === id) {
+                                list[item].count--;
+                                if (list[item].count === 0) {
+                                    list.splice(item, 1);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                obj.listPenalty = function() {
+                    const penaltyCopy = [];
+                    var i;
+                    for (i in list) {
+                        if (list.hasOwnProperty(i)) {
+                            const item = list[i];
+                            const itemCopy = {};
+                            let p;
+                            for (p in item) {
+                                if (item.hasOwnProperty(p)) {
+                                    itemCopy[p] = item[p];
+
+                                }
+                            }
+                            penaltyCopy.push(itemCopy);
+                        }
+                    }
+                    return penaltyCopy;
+                };
+
+                // cart : Array
+                // Item : Object/Class
+                // addItemToCart : Function
+                // removeItemFromCart : Function
+                // removeItemFromCartAll : Function
+                // clearCart : Function
+                // countCart : Function
+                // totalCart : Function
+                // listCart : Function
+                // saveCart : Function
+                // loadCart : Function
+                return obj;
+            })();
+
+
+            $('#exampleModal').on('show.bs.modal',
+                function(event) {
+                    const button = $(event.relatedTarget); // Button that triggered the modal
+                    const recipient = button.data('whatever'); // Extract info from data-* attributes
+                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                    const modal = $(this);
+                    $.ajax({
+                        url: "/Classes/GetStudentInfo",
+                        type: "GET",
+                        data: {
+                            id: recipient
+                        },
+                        success: function(res) {
+                            if (res != null) {
+                                console.log(res);
+                                modal.find('.modal-title').text(`Attendance ${res.fullName}`);
+                                modal.find('#OwedCash').val(res.owedCash);
+                                modal.find('#OwedPushUp').val(res.owedPushUp);
+                                modal.find('#studentId').val(res.id);
+                                modal.find('#penaltyLevel').val(res.penaltyLevel);
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status);
+                            alert(thrownError);
+                        }
+                    });
+                    
+                });
+        });
+    </script>
+}
