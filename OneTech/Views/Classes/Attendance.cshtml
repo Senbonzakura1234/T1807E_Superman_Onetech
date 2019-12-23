@@ -1,345 +1,248 @@
-﻿@using System.Collections
-@using OneTech.Models
+﻿@using OneTech.Models
 @model IEnumerable<OneTech.Models.Student>
 @{
     ViewBag.Title = "View";
-    var currentPara = "&start=" + ViewBag.Start + "&end=" + ViewBag.End;
-
+    var i = 0;
 }
-@*<!--List of Class-->*@
-<div class="row" id="accordion">
+<div class="row">
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
-            <div class="card-body">
-                <h4 class="card-title accordion-toggle">List of Class<span id="accordionIcon">▼</span></h4>
-                <section class="card-description">
-                    @using (Html.BeginForm("Attendance", "Classes", FormMethod.Get))
-                    {
-                        @Html.DropDownList("listOfClassName", null, "-- Select Class --",new { @class = "form-control", onchange = "selectedClass(this)"})
-                    }
-                </section>
-            </div>
-        </div>
-    </div>
-    @*<!--End List of Class-->*@
-
-    @*<!--Search-->*@
-    <div class="col-12 grid-margin stretch-card">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title accordion-toggle">Advanced Search<span id="accordionIcon">▼</span></h4>
-                <section class="card-description">
-                    <p class="card-description d-sm-flex">
-                        <span class="text-muted text-small my-auto">Search Class with filter</span>
-                        <br class="d-sm-none" />
-                        <button class="btn btn-sm btn-light ml-auto mr-2 mt-2 mt-sm-0" id="clearFilter">
-                            Clear filter
-                        </button>
-                    </p>
-                        @using (Html.BeginForm("Attendance", "Classes", FormMethod.Get,
-                            new { role = "search", id = "AdvanceSearchFormAttendance" }))
-                        {
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="form-group mb-lg-0">
-                                    <label for="advanceFullname">
-                                        <span class="text-small">Name</span>
-                                    </label>
-                                    <input id="advanceFullname" value="@ViewBag.advanceFullname" name="advanceFullname" type="text" class="form-control form-control-sm" />
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="form-group mb-lg-0">
-                                    <label for="datefilter">
-                                        <span class="text-small">Date filter</span>
-                                    </label>
-                                    <input type="text" name="datefilter" id="datefilter" value="" class="form-control form-control-sm" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 mt-3 text-right">
-                                <input type="submit" class="btn btn-primary btn-sm" value="Search" />
-                            </div>
-                        </div>
-                    }
-                <div class="row">
-                    <div class="col-12 mt-3 text-left" id="update-classList">
-                    </div>
-                </div>
-                </section>
-
-            </div>
-        </div>
-    </div>
-    @*<!--End of Search-->*@
-
-    @*<!--List of Students-->*@
-    <div class="col-12 grid-margin stretch-card">
-        <div class="card" id="update-attendance">
             <div class="card-body table-responsive">
                 <h4 class="card-title">Attendance</h4>
-                <p class="card-description d-sm-flex">
-                    <span class="text-muted text-small my-auto" id="className">@ViewBag.advanceFullname Attendance</span>
-                    <br class="d-sm-none" />
-                    <a class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0" href="@Url.Action("Create", "Students")">
-                        Create New Student <span class="mdi mdi-plus-circle"></span>
-                    </a>
-                </p>
                 <table class="table">
                     <thead class="text-primary">
                         <tr>
                             <th>
-                                No
+                                #
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.FullName)
                             </th>
-                            <th class="text-center d-none d-sm-table-cell">
-                                @Html.DisplayNameFor(model => model.Class)
-                            </th>
-                            <th class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayNameFor(model => model.OwedCash)
-                            </th>
-                            <th class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayNameFor(model => model.OwedPushUp)
+                            <th class="d-none d-sm-table-cell">
+                                Class Name
                             </th>
                             <th class="text-center d-none d-xl-table-cell">
                                 @Html.DisplayNameFor(model => model.PenaltyLevel)
                             </th>
-                            <th class="text-center d-none d-lg-table-cell">
-                                OnTime
-                            </th>
-                            <th class="text-center d-none d-lg-table-cell">
-                                Penalty
+                            <th class="text-center d-none d-xl-table-cell">
+                                Attendance Status
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                    @for (int i = 0; i < Model.Count(); i++)
-                    {
+                        @foreach (var item in Model)
+                        {
+                            i++;
+                            <tr>
+                                <td>
+                                    <b class="text-small">@i</b>
+                                </td>
 
-                        <tr>
-                            <td>
-                                <b class="text-small">@(i + 1)</b>
-                            </td>
-
-                            <td>
-                                <a class="badge w-100 @(Model.ElementAt(i).StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
-                                            w-100" href="@Url.Action("Details", "Students", new {id = Model.ElementAt(i).Id})">
-                                    @Html.DisplayFor(modelItem => Model.ElementAt(i).FullName)
-                                </a>
-                            </td>
-                            <td class="text-center d-none d-sm-table-cell text-info">
-                                @Html.DisplayFor(modelItem => Model.ElementAt(i).Class.Name)
-                            </td>
-                            <td class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedCash)
-                            </td>
-                            <td class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayFor(modelItem => Model.ElementAt(i).OwedPushUp)
-                            </td>
-                            <td class="text-center d-none d-xl-table-cell">
-                                @Html.DisplayFor(modelItem => Model.ElementAt(i).PenaltyLevel)
-                            </td>
-                            <td>
-                                <div class="form-check">
-                                    <label class="form-check form-check-label">
-                                        <input class="custom-checkbox" type="checkbox"><i class="input-helper"></i>
-                                    </label>
-                                </div>
-                            </td>
-                            <td>
-                                @using (Html.BeginForm("Penalty", "Classes", FormMethod.Post))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <div class="modal fade" id="modalpenaltyForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-
-                                            <div class="modal-content">
-                                                <div class="modal-header text-center">
-                                                    <h4 class="modal-title w-100 font-weight-bold">Penalty</h4>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body mx-3">
-                                                    <div class="form-check form-check-danger">
-                                                        <label class="form-check-label">
-                                                            <input type="radio" class="form-check-input" name="penalty" value="0"> Cash <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check form-check-danger">
-                                                        <label class="form-check-label">
-                                                            <input type="radio" class="form-check-input" name="penalty" value="1"> Push Up <i class="input-helper"></i>
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-text mb-4">
-                                                        <input type="text" class="form-control" name="NewCashRank">
-                                                        <label>New Cash rank</label>
-                                                    </div>
-                                                    <div class="form-text mb-4">
-                                                        <input type="text" class="form-control" name="NewPushRank">
-                                                        <label>New Push up rank</label>
-                                                    </div>
-                                                    @Html.HiddenFor(Model => Model.ElementAt(i).Id)
-                                                </div>
-                                                <div class="modal-footer d-flex justify-content-center">
-                                                    <input type="submit" value="Confirm" class="btn btn-danger" />
-                                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                                <div class="text-center">
-                                    <button type="button" class="btn btn-gradient-primary mr-2" data-toggle="modal" data-target="#modalpenaltyForm">Penalty</button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
+                                <td>
+                                    <a class="badge w-100 @(item.StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
+                                            w-100" href="@Url.Action("Details", "Students", new {id = item.Id})">
+                                        @Html.DisplayFor(modelItem => item.FullName)
+                                    </a>
+                                </td>
+                                <td class="d-none d-sm-table-cell text-info">
+                                    @Html.DisplayFor(modelItem => item.Class.Name)
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    @Html.DisplayFor(modelItem => item.PenaltyLevel)
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal" data-whatever="@item.Id">
+                                        Confirm
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content bg-white">
+            <div class="modal-header border-0">
+                <h4 class="modal-title" id="exampleModalLabel">Confirm</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" name="studentId" id="studentId"/>
+                    <input type="hidden" name="penaltyLevel" id="penaltyLevel"/>
+                    <div class="form-group">
+                        <label for="attendanceStatus">Attendance Status</label>
+
+                        <select class="form-control" id="attendanceStatus" name="attendanceStatus">
+                            <option value="0">On time</option>
+                            <option value="1">Late</option>
+                            <option value="2">Absent</option>
+                            <option value="0">Late (pre-notice)</option>
+                            <option value="0">Absent (pre-notice)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="penaltyType">Penalty Type</label>
+
+                        <select class="form-control" name="penaltyType" id="penaltyType">
+                            <option value="0">Cash</option>
+                            <option value="1">Push up</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentPenaltyLevel">Current Penalty Level</label>
+                        <input type="text" class="form-control" name="currentPenaltyLevel" id="currentPenaltyLevel" readonly="readonly"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="OwedCash">Owe Money</label>
+                        <input type="text" class="form-control" name="OwedCash" id="OwedCash" readonly="readonly"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="OwedPushUp">Owe PushUp</label>
+                        <input type="text" class="form-control" name="OwedPushUp" id="OwedPushUp" readonly="readonly"/>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-primary confirm-btn" data-dismiss="modal">Confirm</button>
+                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                @*@using (Html.BeginForm("", "", null))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => item.Id)
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        }*@
+            </div>
+        </div>
     </div>
-    @*<!--End List of Students-->*@
+</div>
 
 @section scripts{
     <script type="text/javascript">
-        $(function() {
-            // init start time and end time;
-            var startDate = new Date();
-            startDate.setFullYear(startDate.getFullYear() - 1);
-            var endDate = new Date();
+        $(function () {
+            var listPenalty = (function() {
+                // =============================
+                // Private methods and propeties
+                // =============================
+                var list = [];
 
-            // check start and end parameter
-            const startPara = getParameterFromUrl('start');
-            if (startPara != null) {
-                startDate = new Date(startPara);
-            }
-            const endPara = getParameterFromUrl('end');
-            if (endPara != null) {
-                endDate = new Date(endPara);
-            }
-
-
-            // ReSharper disable once PossiblyUnassignedProperty
-            $('input[name="datefilter"]').daterangepicker({
-                autoUpdateInput: true,
-                startDate: startDate,
-                endDate: endDate,
-                locale: {
-                    cancelLabel: 'Clear'
+                // Constructor
+                function Penalty(id, penaltyType, penaltyCash, penaltyPushUp) {
+                    this.id = id;
+                    this.penaltyType = penaltyType;
+                    this.penaltyCash = penaltyCash;
+                    this.penaltyPushUp = penaltyPushUp;
                 }
-            });
-            // ReSharper disable UnusedParameter
 
-            $('input[name="datefilter"]').on('apply.daterangepicker',
-                function(ev, picker) {
-                    const start = picker.startDate.format('YYYY-MM-DD');
-                    const end = picker.endDate.format('YYYY-MM-DD');
-                    window.location.href = window.location.href.split('?')[0] + '?start=' + start + '&end=' + end;
-                });
 
-            $('input[name="datefilter"]').on('cancel.daterangepicker',
-                function(ev, picker) {
-                    // ReSharper restore UnusedParameter
-                    $(this).val("");
-                });
 
-            function getParameterFromUrl(parameter) {
-                const urlString = window.location.href;
-                const url = new URL(urlString);
-                return url.searchParams.get(parameter);
-            }
-        });
+                // =============================
+                // Public methods and propeties
+                // =============================
+                const obj = {};
 
-        function selectedClass(itemOption) {
-            $.ajax({
-                type: "GET",
-                url: window.document.location.href = '/Classes/Attendance?className=' + itemOption.options[itemOption.selectedIndex].text,
-                success: function(data) {
-                    //$("#update-attendance").off('change', selectedClass);
-                    $("#update-attendance").html(data);
-                    //$("#update-attendance").on('change', selectedClass);
-                }
-            });
+                // Add to cart
+                obj.addPenaltyToList = function(id, penaltyType, penaltyCash, penaltyPushUp) {
+                    var item;
+                    for (item in list) {
+                        if (list.hasOwnProperty(item)) {
+                            if (list[item].id === id) {
+                                list[item].count++;
+                                return;
+                            }
+                        }
+                    }
+                    item = new Penalty(id, penaltyType, penaltyCash, penaltyPushUp);
+                    console.log(item);
+                    list.push(item);
+                };
+                // Remove item from cart
+                obj.removePenaltyFromList = function(id) {
+                    for (let item in list) {
+                        if (list.hasOwnProperty(item)) {
+                            if (list[item].id === id) {
+                                list[item].count--;
+                                if (list[item].count === 0) {
+                                    list.splice(item, 1);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                };
 
-        }
-        
+                obj.listPenalty = function() {
+                    const penaltyCopy = [];
+                    var i;
+                    for (i in list) {
+                        if (list.hasOwnProperty(i)) {
+                            const item = list[i];
+                            const itemCopy = {};
+                            let p;
+                            for (p in item) {
+                                if (item.hasOwnProperty(p)) {
+                                    itemCopy[p] = item[p];
 
-        jQuery(document).ready(function($) {
-            //Toggle Card
-            $("#accordion").find(".accordion-toggle").next().removeAttr("style").hide();
-            $("#accordion").find(".accordion-toggle").click(function() {
-                $(this).next().slideToggle("fast");
-                $(".accordion-content").not($(this).next()).slideUp("fast");
-                if ($(this).find("span#accordionIcon").text() == "▼") {
-                    $(this).find("span#accordionIcon").text("▲");
-                } else {
-                    $(this).find("span#accordionIcon").text("▼");
-                }
-            });
-            //Clear Filter
-            $("#clearFilter").click(function() {
-                $("#advanceCheck").prop("checked", !1);
-                $("#advanceCheckValue").val(0);
-                $("input[name = 'advanceFullname']").val(null);
-            });
-            //
-            $("#AdvanceSearchFormAttendance").on("submit",
-                function(n) {
-                    n.preventDefault();
-                    var t = $("input[name = 'advanceFullname']").val();
+                                }
+                            }
+                            penaltyCopy.push(itemCopy);
+                        }
+                    }
+                    return penaltyCopy;
+                };
+
+                // cart : Array
+                // Item : Object/Class
+                // addItemToCart : Function
+                // removeItemFromCart : Function
+                // removeItemFromCartAll : Function
+                // clearCart : Function
+                // countCart : Function
+                // totalCart : Function
+                // listCart : Function
+                // saveCart : Function
+                // loadCart : Function
+                return obj;
+            })();
+
+
+            $('#exampleModal').on('show.bs.modal',
+                function(event) {
+                    const button = $(event.relatedTarget); // Button that triggered the modal
+                    const recipient = button.data('whatever'); // Extract info from data-* attributes
+                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                    const modal = $(this);
                     $.ajax({
-                        url: "/Classes/AjaxSearchClass",
+                        url: "/Classes/GetStudentInfo",
                         type: "GET",
                         data: {
-                            advanceName: t
+                            id: recipient
                         },
-                        success: function(n) {
-                            $("#update-classList").html(n);
+                        success: function(res) {
+                            if (res != null) {
+                                console.log(res);
+                                modal.find('.modal-title').text(`Attendance ${res.fullName}`);
+                                modal.find('#OwedCash').val(res.owedCash);
+                                modal.find('#OwedPushUp').val(res.owedPushUp);
+                                modal.find('#studentId').val(res.id);
+                                modal.find('#penaltyLevel').val(res.penaltyLevel);
+                            }
                         },
-                        error: function(n, t, i) {
-                            alert(n.status);
-                            alert(i);
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status);
+                            alert(thrownError);
                         }
                     });
-                    $("html, body").animate({
-                            scrollTop: $("#goto").offset().top
-                        },
-                        1e3);
-                });
-            //Form Penalty
-            $("#AdvancePenalty").on("submit",
-                function(n) {
-                    n.preventDefault();
-                    const t = $("input[name = 'advanceFullname']").val(),
-                        i = $("input[name = 'advanceEmail']").val(),
-                        r = $("input[name = 'advanceAge']").val(),
-                        u = $("#advanceCheckValue").val();
-                    $.ajax({
-                        url: "/Customers/AjaxCustomers",
-                        type: "GET",
-                        data: {
-                            advanceFullname: t,
-                            advanceEmail: i,
-                            advanceAge: r,
-                            advanceCheckValue: u
-                        },
-                        success: function(n) {
-                            $("#update-customer").html(n);
-                        },
-                        error: function(n, t, i) {
-                            alert(n.status);
-                            alert(i);
-                        }
-                    });
+                    
                 });
         });
     </script>

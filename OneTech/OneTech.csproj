@@ -339,8 +339,6 @@
     <Content Include="Views\Classes\Edit.cshtml" />
     <Content Include="Views\Classes\Index.cshtml" />
     <Content Include="Views\Classes\Attendance.cshtml" />
-    <Content Include="Views\Classes\_AjaxAttendance.cshtml" />
-    <Content Include="Views\Classes\_AjaxSearchClass.cshtml" />
     <Content Include="Views\Students\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>

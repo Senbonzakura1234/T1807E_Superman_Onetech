@@ -224,87 +224,33 @@ namespace OneTech.Controllers
             return RedirectToAction("Index");
         }
         //GET: Attendance
-        public ActionResult Attendance(string className)
+        public ActionResult Attendance(int id)
         {
-            if (className == null)
-            {
-                className = db.Classes.ToList().ElementAtOrDefault(1)?.Name;
-            }
-            //List of Student
-            var @class = db.Classes.FirstOrDefault(s=>s.Name.Contains(className));
-            if (@class != null)
-            {
-                ViewBag.listOfClassName = new SelectList(db.Classes, "Id", "Name");
-                ViewBag.advanceFullname = @class.Name;
-                var listStudents = db.Students.Where(x => x.ClassId == @class.Id).OrderByDescending(s => s.CreatedAt).ToList();
-                return Request.IsAjaxRequest() ? (ActionResult)PartialView("_AjaxAttendance", listStudents) : View(listStudents);
-            }
-            return View();
+            var predicate = PredicateBuilder.New<Student>(true);
+            predicate = predicate.And(f => f.ClassId == id);
+            var data = db.Students.AsExpandable().Where(predicate);
+            return View(data);
         }
-        public ActionResult AjaxSearchClass(string advanceName)
-        {
-            var predicate = PredicateBuilder.New<Class>(true);
-            //predicate = predicate.And(f => f.ProductStatus != Product.ProductStatusEnum.Deleted);
-           // Debug.WriteLine(advanceBrand);
-            if (!string.IsNullOrEmpty(advanceName))
-            {
-                Debug.WriteLine("okay");
-                predicate = predicate.And(f => f.Name.Contains(advanceName));
-                ViewBag.advanceName = advanceName;
-            }
-            var data = db.Classes.AsExpandable().Where(predicate);
-            var lsProducts = new List<Class>();
-            foreach (var item in data)
-            {
-                lsProducts.Add(item);
-            }
-            return PartialView("_AjaxSearchClass", lsProducts);
-        }
-        
-        public ActionResult Penalty(FormCollection data)
-        {
-            if (ModelState.IsValid)
-            {
-                
-                    //Response.Write("Key=" + key + " ");
-                    //Response.Write("Value=" + data[key]);
-                    //Response.Write("<br/>");
-                    //Debug.WriteLine(data["Id"]);
-                    var student = db.Students.Find(Int32.Parse(data["Id"]));
-                    if (student == null || student.StudentStatus == Student.StudentStatusEnum.Deleted)
-                    {
-                        return Redirect("Attendance");
-                    }
-                    var penaltyLevel = student.PenaltyLevel + 1;
-                    db.Students.Add(student);
-                    db.SaveChanges();
-                    Models.Penalty penalty = new Penalty();
-                    if (data["NewCashRank"] == null || Int32.Parse(data["penalty"]) == 0)
-                    {
-                        student.PenaltyLevel += 1;
-                        penalty.StudentId = student.Id;
-                        penalty.CreatedAt = DateTime.Now;
-                        penalty.PenaltyType = (Penalty.PenaltyEnum) 0;
-                        penalty.PenaltyCash = (int)10000 * penaltyLevel;
-                    }
-                    else
-                    {
-                        student.PenaltyLevel += 1;
-                        penalty.StudentId = student.Id;
-                        penalty.CreatedAt = DateTime.Now;
-                        penalty.PenaltyType = (Penalty.PenaltyEnum) 1;
-                        penalty.PenaltyCash = (double)10 * penaltyLevel;
-                    }
-                    Debug.WriteLine(penalty);
-                    ViewBag.penalty = penalty;
-                    db.Penalties.Add(penalty);
-                    db.SaveChanges();
-                
-                return Redirect("Attendance");
-            }
-            return null;
 
+        public JsonResult GetStudentInfo(int? id)
+        {
+            if (id == null)
+            {
+                return null;
+            }
+            var student = db.Students.Find(id);
+            return student != null
+                ? Json(new
+                {
+                    id = student.Id,
+                    fullName = student.FullName,
+                    owedCash = student.OwedCash,
+                    owedPushUp = student.OwedPushUp,
+                    penaltyLevel = student.PenaltyLevel
+                }, JsonRequestBehavior.AllowGet)
+                : null;
         }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
