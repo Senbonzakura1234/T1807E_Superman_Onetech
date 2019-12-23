@@ -15,19 +15,17 @@
             </div>
             <div class="card-body">
                 <h5 class="card-title">
-                    <b>Student # @Html.DisplayFor(model => model.Id)</b>
+                    <b>Student Code # SC @Html.DisplayFor(model => model.Id)</b>
                 </h5>
                 <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.FullName): </b>
                     @Html.DisplayFor(model => model.FullName)
                 </p>
                 <p class="card-text">
-                    <b>@Html.DisplayNameFor(model => model.StudentCode): </b>
-                    @Html.DisplayFor(model => model.StudentCode)
-                </p>
-                <p class="card-text">
                     <b>Class Name: </b>
-                    @Html.DisplayFor(model => model.Class.Name)
+                    <a href="@Url.Action("Details", "Classes", new {id = Model.ClassId})" class="badge badge-gradient-success">
+                        @Html.DisplayFor(model => model.Class.Name)
+                    </a>
                 </p>
                 <p class="card-text">
                     <b>@Html.DisplayNameFor(model => model.Birthday): </b>

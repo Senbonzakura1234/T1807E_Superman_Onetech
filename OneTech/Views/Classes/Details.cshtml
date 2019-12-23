@@ -1,12 +1,11 @@
-﻿@using OneTech.Models
-@model OneTech.Models.Class
+﻿@model OneTech.Models.Class
+@{
+    ViewBag.Title = "Detail";
+    var i = 0;
+}
 <div class="row">
-    <div class="col-lg-6 col-xl-4 grid-margin stretch-card">
+    <div class="col-lg-6 col-xl-4 grid-margin">
         <div class="card">
-            <div class="card-img-top text-center pt-3">
-                <img class="border-primary" src="https://res.cloudinary.com/senbonzakura/image/upload/v1573316680/images/faces/avatar2_p9btpy.png"
-                     style="max-width: 100%; max-height: 180px; padding: 4px; border: 2px solid; border-radius: 100%" alt="Avatar" />
-            </div>
             <div class="card-body">
                 <h5 class="card-title">
                     <b>Class # @Html.DisplayFor(model => model.Id)</b>
@@ -20,7 +19,7 @@
                     @Html.DisplayFor(model => model.CreatedAt)
                 </p>
 
-                <div class="d-sm-flex">
+                <div class="d-sm-flex mt-5">
                     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-sm btn-warning mr-3" })
                     <button type="button" class="btn btn-danger btn-sm mr-3" data-toggle="modal" data-target="#exampleModal">
                         Delete
@@ -29,6 +28,58 @@
                         Back
                     </a>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-xl-8 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body table-responsive">
+                <h4 class="card-title">Student</h4>
+                <p class="card-description d-sm-flex">
+
+                    <a class="btn btn-primary btn-sm mt-2 mt-sm-0 ml-auto" href="@Url.Action("Attendance", "Classes", new {id = Model.Id})">
+                        Start Attendance
+                    </a>
+                </p>
+                <table class="table" id="update-student">
+                    <thead class="text-primary">
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                Full Name
+                            </th>
+                            <th class="d-none d-xl-table-cell">
+                                Student Code
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                PenaltyLevel
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.StudentList)
+                        {
+                            i++;
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+
+                                <td>
+                                    @item.FullName
+                                </td>
+                                <td class="d-none d-xl-table-cell ">
+                                    @item.StudentCode
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    @item.PenaltyLevel
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

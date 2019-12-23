@@ -50,7 +50,6 @@ namespace OneTech.Migrations
                     {
                         Id = i * 15 + j,
                         FullName = nameSt[nameRandom.Next(0, nameSt.Length)],
-                        StudentCode = "SC" + i*15 +j,
                         ClassId = i,
                         Birthday = RandomDay()
                     });

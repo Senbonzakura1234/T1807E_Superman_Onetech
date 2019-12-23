@@ -1,122 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Core;
-using System.Data.Entity.Core.Objects;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using LinqKit;
-using Microsoft.Ajax.Utilities;
 using OneTech.Models;
 
 namespace OneTech.Controllers
 {
     public class ClassesController : Controller
     {
-        private MyContext db = new MyContext();
-        public ActionResult GetChartData(string start, string end)
-        {
-            var startTime = DateTime.Now;
-            startTime = startTime.AddYears(-1);
-            try
-            {
-                startTime = DateTime.Parse(start);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            startTime = new DateTime(startTime.Year, startTime.Month, startTime.Day, 0, 0, 0, 0);
-
-            var endTime = DateTime.Now;
-            try
-            {
-                endTime = DateTime.Parse(end);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-            endTime = new DateTime(endTime.Year, endTime.Month, endTime.Day, 23, 59, 59, 0);
-
-            var data = db.Classes.Where(s => s.DeletedAt != null && (s.CreatedAt >= startTime && s.CreatedAt <= endTime))
-                .GroupBy(
-                    s => new
-                    {
-                        Year = s.CreatedAt.Year,
-                        Month = s.CreatedAt.Month,
-                        Day = s.CreatedAt.Day
-                    }
-                ).Select(s => new
-                {
-                    Date = s.FirstOrDefault().CreatedAt,
-                    Count = s.Count()
-                }).OrderBy(s => s.Date).ToList();
-            return new JsonResult()
-            {
-                Data = data.Select(s => new
-                {
-                    Date = s.Date.ToString("MM/dd/yyyy"),
-                    Count = s.Count
-                }),
-                JsonRequestBehavior = JsonRequestBehavior.AllowGet
-            };
-        }
+        private readonly MyContext _db = new MyContext();
 
         // GET: Classes
-        public ActionResult Index(int? page, int? limit, string start, string end, String keyword)
+        public ActionResult Index(string keyword)
         {
-            if (page == null)
-            {
-                page = 1;
-            }
-
-            if (limit == null)
-            {
-                limit = 20;
-            }
-            var startTime = DateTime.Now;
-            startTime = startTime.AddYears(-100);
-            try
-            {
-                startTime = DateTime.Parse(start);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            var endTime = DateTime.Now;
-            try
-            {
-                endTime = DateTime.Parse(end);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
             var predicate = PredicateBuilder.New<Class>(true);
-            if (!keyword.IsNullOrWhiteSpace())
+            if (!string.IsNullOrEmpty(keyword) && !string.IsNullOrWhiteSpace(keyword))
             {
-                predicate = predicate.Or(f => f.Name.Contains(keyword));
-                var data = db.Classes.AsExpandable().Where(predicate).OrderByDescending(c => c.Name);
+                predicate = predicate.And(f => f.Name.Contains(keyword));
                 ViewBag.Keyword = keyword;
-                ViewBag.DataSearch = data;
             }
-            
-            ViewBag.limit = limit;
-            var classes = db.Classes.OrderByDescending(s => s.CreatedAt).Where(s => s.CreatedAt >= startTime && s.CreatedAt <= endTime);
-            ViewBag.TotalPage = Math.Ceiling((double)classes.Count() / limit.Value);
-            ViewBag.CurrentPage = page;
-            ViewBag.Limit = limit;
-            ViewBag.Start = startTime.ToString("yyyy-MM-dd");
-            ViewBag.End = endTime.ToString("yyyy-MM-dd");
-            var list = classes.Skip((page.Value - 1) * limit.Value).Take(limit.Value).ToList();
-            return View(list);
+            var data = _db.Classes.AsExpandable().Where(predicate);
+            return View(data);
         }
 
         // GET: Classes/Details/5
@@ -126,7 +36,12 @@ namespace OneTech.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Class @class = db.Classes.Find(id);
+            var @class = _db.Classes.Find(id);
+            var predicate = PredicateBuilder.New<Student>(true);
+            predicate = predicate.And(f => f.ClassId == id &&
+                                           f.StudentStatus != Student.StudentStatusEnum.Deleted &&
+                                           f.StudentStatus != Student.StudentStatusEnum.Inactive);
+            ViewBag.StudentList = _db.Students.AsExpandable().Where(predicate);
             if (@class == null)
             {
                 return HttpNotFound();
@@ -151,8 +66,8 @@ namespace OneTech.Controllers
             {
                 @class.CreatedAt = DateTime.Now;
                 @class.UpdatedAt = DateTime.Now;
-                db.Classes.Add(@class);
-                db.SaveChanges();
+                _db.Classes.Add(@class);
+                _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -166,7 +81,7 @@ namespace OneTech.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Class @class = db.Classes.Find(id);
+            var @class = _db.Classes.Find(id);
             if (@class == null)
             {
                 return HttpNotFound();
@@ -184,10 +99,10 @@ namespace OneTech.Controllers
             if (ModelState.IsValid)
             {
                 @class.UpdatedAt = DateTime.Now;
-                db.Entry(@class).State = EntityState.Modified;
+                _db.Entry(@class).State = EntityState.Modified;
                 try
                 {
-                    db.SaveChanges();
+                    _db.SaveChanges();
                 }
                 catch (OptimisticConcurrencyException)
                 {
@@ -218,17 +133,21 @@ namespace OneTech.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Class @class = db.Classes.Find(id);
-            db.Classes.Remove(@class);
-            db.SaveChanges();
+            var @class = _db.Classes.Find(id);
+            if (@class != null) _db.Classes.Remove(@class);
+            _db.SaveChanges();
             return RedirectToAction("Index");
         }
         //GET: Attendance
         public ActionResult Attendance(int id)
         {
             var predicate = PredicateBuilder.New<Student>(true);
-            predicate = predicate.And(f => f.ClassId == id);
-            var data = db.Students.AsExpandable().Where(predicate);
+            predicate = predicate.And(f => f.ClassId == id && 
+                                           f.StudentStatus != Student.StudentStatusEnum.Deleted && 
+                                           f.StudentStatus != Student.StudentStatusEnum.Inactive);
+            var data = _db.Students.AsExpandable().Where(predicate);
+            ViewBag.Length = data.Count();
+            ViewBag.ClassId = id;
             return View(data);
         }
 
@@ -238,7 +157,7 @@ namespace OneTech.Controllers
             {
                 return null;
             }
-            var student = db.Students.Find(id);
+            var student = _db.Students.Find(id);
             return student != null
                 ? Json(new
                 {
@@ -250,12 +169,86 @@ namespace OneTech.Controllers
                 }, JsonRequestBehavior.AllowGet)
                 : null;
         }
+        public class AttendanceInfo
+        {
+            // ReSharper disable once InconsistentNaming
+            public int id { get; set; }
+            // ReSharper disable once InconsistentNaming
+            [Range(1,2)]
+            // 1 cash 2 push up
+            public int penaltyType { get; set; }
+            // ReSharper disable once InconsistentNaming
+            public bool owed { get; set; }
+            // ReSharper disable once InconsistentNaming
+            public bool onTime { get; set; }
+        }
+        public ActionResult AttendanceConfirm(List<AttendanceInfo> attendances, int classId)
+        {
+            var redirectUrl = Url.Action("Details", "Classes", new {id = classId});
+            if (attendances == null) return null;
+            foreach (var item in attendances)
+            {
+                var student = _db.Students.Find(item.id);
+                if (student == null) continue;
+                if (!item.onTime)
+                {
+                    var level = student.PenaltyLevel + 1;
+                    student.PenaltyLevel += 1;
+                    var cash = 0;
+                    var pushUp = 0;
+                    Penalty.PenaltyEnum type;
+                    if (item.penaltyType == 1)
+                    {
+                        cash = level * 10;
+                        type = Penalty.PenaltyEnum.Cash;
+                    }
+                    else
+                    {
+                        pushUp = level * 20;
+                        type = Penalty.PenaltyEnum.Pushup;
+                    }
 
+                    if (item.owed)
+                    {
+                        student.OwedCash += cash;
+                        student.OwedPushUp += pushUp;
+                    }
+                    else
+                    {
+                        student.OwedCash = 0;
+                        student.OwedPushUp = 0;
+                    }
+
+                    var penalty = new Penalty
+                    {
+                        StudentId = item.id,
+                        PenaltyType = type,
+                        PenaltyCash = cash,
+                        PenaltyPushUp = pushUp
+                    };
+                    _db.Penalties.Add(penalty);
+
+                    _db.Entry(student).State = EntityState.Modified;
+                    _db.SaveChanges();
+                }
+                else
+                {
+                    student.OwedCash = 0;
+                    student.OwedPushUp = 0;
+                    student.PenaltyLevel = 0;
+
+                    _db.Entry(student).State = EntityState.Modified;
+                    _db.SaveChanges();
+                }
+            }
+
+            return Json(new { url = redirectUrl });
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }

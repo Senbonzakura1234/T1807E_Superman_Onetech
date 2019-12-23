@@ -4,29 +4,33 @@
     ViewBag.Title = "Edit";
 }
 
-    <div class="row">
-        <div class="col-md-8 mx-auto grid-margin stretch-card">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Customer</h4>
-                    <p class="card-description">Edit Customer</p>
-                    @using (Html.BeginForm("Edit","Classes",FormMethod.Post))
-                    {
-                        @Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-md-8 mx-auto grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Classes</h4>
+                <p class="card-description">Edit Class</p>
+                @using (Html.BeginForm("Edit", "Classes", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
 
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div class="form-group">
-                            @Html.LabelFor(model => model.Name)
-                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-                        </div>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Name)
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
 
-                        <input type="submit" class="btn btn-gradient-primary mr-2" value="Update" />
-                        <a class="btn btn-light" href="@Url.Action("Index")">
-                            Cancel
-                        </a>
-                    }
-                </div>
+                    <input type="submit" class="btn btn-gradient-primary mr-2" value="Update" />
+                    <a class="btn btn-light" href="@Url.Action("Index")">
+                        Cancel
+                    </a>
+                }
             </div>
         </div>
     </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,6 +1,7 @@
 ﻿// ReSharper disable RedundantUsingDirective
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -11,13 +12,13 @@ namespace OneTech.Models
     public class Student
     {
         [Key]
+        [DisplayName("Student Code")]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "FullName is required")]
         public string FullName { get; set; }
-        [Required]
-        public string StudentCode { get; set; }
 
         [ForeignKey("Class")]
+        [DisplayName("Class Name")]
         public int ClassId { get; set; } 
         public virtual Class Class { get; set; }
 

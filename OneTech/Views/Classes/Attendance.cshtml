@@ -9,17 +9,31 @@
         <div class="card">
             <div class="card-body table-responsive">
                 <h4 class="card-title">Attendance</h4>
+                <p class="card-description d-sm-flex">
+                    <button class="btn btn-sm btn-primary ml-auto mr-2 mt-2 mt-sm-0 confirm-all-btn" disabled="disabled">
+                        Update Attendance Info
+                    </button>
+                </p>
                 <table class="table">
                     <thead class="text-primary">
                         <tr>
-                            <th>
+                            <th class="text-center d-none d-xl-table-cell">
                                 #
                             </th>
-                            <th>
+                            <th class="text-center">
                                 @Html.DisplayNameFor(model => model.FullName)
                             </th>
-                            <th class="d-none d-sm-table-cell">
-                                Class Name
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.Id)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.ClassId)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.OwedPushUp)
+                            </th>
+                            <th class="text-center d-none d-xl-table-cell">
+                                @Html.DisplayNameFor(model => model.OwedCash)
                             </th>
                             <th class="text-center d-none d-xl-table-cell">
                                 @Html.DisplayNameFor(model => model.PenaltyLevel)
@@ -33,26 +47,39 @@
                         @foreach (var item in Model)
                         {
                             i++;
-                            <tr>
-                                <td>
+                            <tr id="studentId_@item.Id" class="transition">
+                                <td class="text-center d-none d-xl-table-cell">
                                     <b class="text-small">@i</b>
                                 </td>
 
-                                <td>
+                                <td class="text-center">
                                     <a class="badge w-100 @(item.StudentStatus == Student.StudentStatusEnum.Active ? "badge-gradient-primary" : "badge-gradient-secondary")
                                             w-100" href="@Url.Action("Details", "Students", new {id = item.Id})">
                                         @Html.DisplayFor(modelItem => item.FullName)
                                     </a>
                                 </td>
-                                <td class="d-none d-sm-table-cell text-info">
+                                <td class="text-center">
+                                    SC @Html.DisplayFor(modelItem => item.Id)
+                                </td>
+                                <td class="text-center">
                                     @Html.DisplayFor(modelItem => item.Class.Name)
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    @Html.DisplayFor(modelItem => item.OwedPushUp)
+                                </td>
+                                <td class="text-center d-none d-xl-table-cell">
+                                    @Html.DisplayFor(modelItem => item.OwedCash)
                                 </td>
                                 <td class="text-center d-none d-xl-table-cell">
                                     @Html.DisplayFor(modelItem => item.PenaltyLevel)
                                 </td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal" data-whatever="@item.Id">
-                                        Confirm
+                                        Absent/Late
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary btn-sm onTime" data="@item.Id">
+                                        On time
                                     </button>
                                 </td>
                             </tr>
@@ -76,43 +103,54 @@
             <div class="modal-body">
                 <form>
                     <input type="hidden" name="studentId" id="studentId"/>
-                    <input type="hidden" name="penaltyLevel" id="penaltyLevel"/>
+                    <input type="hidden" name="penaltyLevel" id="penaltyLevel" step="1" min="0" max="1000"/>
                     <div class="form-group">
                         <label for="attendanceStatus">Attendance Status</label>
 
-                        <select class="form-control" id="attendanceStatus" name="attendanceStatus">
-                            <option value="0">On time</option>
+                        <select class="form-control selectpicker search-option-select" id="attendanceStatus" name="attendanceStatus"
+                                data-style="select-option-btn">
+                            <option value="0">--------------</option>
                             <option value="1">Late</option>
                             <option value="2">Absent</option>
-                            <option value="0">Late (pre-notice)</option>
-                            <option value="0">Absent (pre-notice)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="penaltyType">Penalty Type</label>
 
-                        <select class="form-control" name="penaltyType" id="penaltyType">
-                            <option value="0">Cash</option>
-                            <option value="1">Push up</option>
+                        <select class="form-control search-option-select selectpicker" name="penaltyType" id="penaltyType"
+                                data-style="select-option-btn">
+                            <option value="0">--------------</option>
+                            <option value="1">Cash</option>
+                            <option value="2">Push up</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="currentPenaltyLevel">Current Penalty Level</label>
-                        <input type="text" class="form-control" name="currentPenaltyLevel" id="currentPenaltyLevel" readonly="readonly"/>
+                        <label for="currentPenaltyLevel">After Confirm Penalty Level</label>
+                        <input type="number" class="form-control" name="currentPenaltyLevel" id="currentPenaltyLevel"
+                               step="1" min="0" max="1000" readonly="readonly"/>
                     </div>
                     <div class="form-group">
                         <label for="OwedCash">Owe Money</label>
-                        <input type="text" class="form-control" name="OwedCash" id="OwedCash" readonly="readonly"/>
+                        <input type="number" class="form-control" name="OwedCash" id="OwedCash" readonly="readonly"/>
                     </div>
                     <div class="form-group">
                         <label for="OwedPushUp">Owe PushUp</label>
-                        <input type="text" class="form-control" name="OwedPushUp" id="OwedPushUp" readonly="readonly"/>
+                        <input type="number" class="form-control" name="OwedPushUp" id="OwedPushUp" readonly="readonly"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="TotalCash">Total PushUp</label>
+                        <input type="number" class="form-control" name="TotalCash" id="TotalCash" readonly="readonly"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="TotalPushUp">Total PushUp</label>
+                        <input type="number" class="form-control" name="TotalPushUp" id="TotalPushUp" readonly="readonly"/>
                     </div>
                 </form>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="btn btn-primary confirm-btn" data-dismiss="modal">Confirm</button>
+                <button type="button" class="btn btn-primary pay-btn" data-dismiss="modal" disabled="disabled">Pay now</button>
+                <button type="button" class="btn btn-warning owe-btn" data-dismiss="modal" disabled="disabled">Next time</button>
                 <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
                 @*@using (Html.BeginForm("", "", null))
         {
@@ -128,6 +166,7 @@
 @section scripts{
     <script type="text/javascript">
         $(function () {
+            var dataLength = @ViewBag.Length;
             var listPenalty = (function() {
                 // =============================
                 // Private methods and propeties
@@ -135,13 +174,12 @@
                 var list = [];
 
                 // Constructor
-                function Penalty(id, penaltyType, penaltyCash, penaltyPushUp) {
+                function Penalty(id, penaltyType, owed, onTime) {
                     this.id = id;
                     this.penaltyType = penaltyType;
-                    this.penaltyCash = penaltyCash;
-                    this.penaltyPushUp = penaltyPushUp;
+                    this.owed = owed;
+                    this.onTime = onTime;
                 }
-
 
 
                 // =============================
@@ -150,7 +188,7 @@
                 const obj = {};
 
                 // Add to cart
-                obj.addPenaltyToList = function(id, penaltyType, penaltyCash, penaltyPushUp) {
+                obj.addPenaltyToList = function(id, penaltyType, owed, onTime) {
                     var item;
                     for (item in list) {
                         if (list.hasOwnProperty(item)) {
@@ -160,7 +198,7 @@
                             }
                         }
                     }
-                    item = new Penalty(id, penaltyType, penaltyCash, penaltyPushUp);
+                    item = new Penalty(id, penaltyType, owed, onTime);
                     console.log(item);
                     list.push(item);
                 };
@@ -198,18 +236,6 @@
                     }
                     return penaltyCopy;
                 };
-
-                // cart : Array
-                // Item : Object/Class
-                // addItemToCart : Function
-                // removeItemFromCart : Function
-                // removeItemFromCartAll : Function
-                // clearCart : Function
-                // countCart : Function
-                // totalCart : Function
-                // listCart : Function
-                // saveCart : Function
-                // loadCart : Function
                 return obj;
             })();
 
@@ -235,6 +261,9 @@
                                 modal.find('#OwedPushUp').val(res.owedPushUp);
                                 modal.find('#studentId').val(res.id);
                                 modal.find('#penaltyLevel').val(res.penaltyLevel);
+                                modal.find('#currentPenaltyLevel').val(res.penaltyLevel);
+                                modal.find('.pay-btn').prop('id', res.id);
+                                modal.find('.owe-btn').prop('id', res.id);
                             }
                         },
                         error: function(xhr, ajaxOptions, thrownError) {
@@ -242,8 +271,123 @@
                             alert(thrownError);
                         }
                     });
-                    
+
                 });
+            $(`#penaltyType`).on(`change`,
+                function () {
+                    // ReSharper disable CoercedEqualsUsing
+
+                    const valueSelected = this.value;
+                    const penaltyTypeVal = $(`#attendanceStatus`).val();
+                    if (valueSelected == 0 || penaltyTypeVal == 0) {
+                        $(".owe-btn").attr("disabled", true);
+                        $(".pay-btn").attr("disabled", true);
+
+                    } else {
+                        if (penaltyTypeVal == 1) {
+                            $(".pay-btn").attr("disabled", false);
+                            $(".owe-btn").attr("disabled", true);
+                        } else {
+                            $(".pay-btn").attr("disabled", true);
+                            $(".owe-btn").attr("disabled", false);
+                        }
+                    }
+                });
+            $(`#attendanceStatus`).on(`change`,
+                function() {
+                    const valueSelected = this.value;
+                    const penaltyTypeVal = $(`#penaltyType`).val();
+                    const baseLevel = parseInt($('#penaltyLevel').val()) + 1;
+
+                    if (valueSelected == 0 || penaltyTypeVal == 0) {
+                        $('#currentPenaltyLevel').val(0);
+                        $(".owe-btn").attr("disabled", true);
+                        $(".pay-btn").attr("disabled", true);
+
+                    } else {
+                        $('#currentPenaltyLevel').val(baseLevel);
+                        if (valueSelected == 1) {
+                            $(".pay-btn").attr("disabled", false);
+                            $(".owe-btn").attr("disabled", true);
+                        } else {
+                            $(".pay-btn").attr("disabled", true);
+                            $(".owe-btn").attr("disabled", false);
+                        }
+                    }
+                });
+            $('.onTime').click(function() {
+                const id = $(this).attr('data');
+                $(`#studentId_${id}`).css('opacity', '0.1');
+                listPenalty.removePenaltyFromList(id);
+                listPenalty.addPenaltyToList(id, null, null, true);
+                if (listPenalty.listPenalty().length == parseInt(dataLength)) {
+                    $(".confirm-all-btn").attr("disabled", false);
+                } else {
+                    $(".confirm-all-btn").attr("disabled", true);
+                }
+            });
+            $('.pay-btn').click(function() {
+                const id = $(this).attr('id');
+                $(`#studentId_${id}`).css('opacity', '0.1');
+                console.log(id);
+// ReSharper disable once CoercedEqualsUsing
+                if ($('#attendanceStatus').val() == 0) {
+                    listPenalty.removePenaltyFromList($('#studentId').val());
+                } else {
+                    listPenalty.removePenaltyFromList($('#studentId').val());
+                    listPenalty.addPenaltyToList($('#studentId').val(), $('#penaltyType').val(), false, false);
+                }
+                
+                if (listPenalty.listPenalty().length == parseInt(dataLength)) {
+                    $(".confirm-all-btn").attr("disabled", false);
+                } else {
+                    $(".confirm-all-btn").attr("disabled", true);
+                }
+            });
+            $('.owe-btn').click(function() {
+                const id = $(this).attr('id');
+                $(`#studentId_${id}`).css('opacity', '0.1');
+                console.log(id);
+// ReSharper disable once CoercedEqualsUsing
+                if ($('#attendanceStatus').val() == 0) {
+                    listPenalty.removePenaltyFromList($('#studentId').val());
+                } else {
+                    listPenalty.removePenaltyFromList($('#studentId').val());
+                    listPenalty.addPenaltyToList($('#studentId').val(), $('#penaltyType').val(), true);
+                }
+                
+                if (listPenalty.listPenalty().length == parseInt(dataLength)) {
+                    $(".confirm-all-btn").attr("disabled", false);
+                } else {
+                    $(".confirm-all-btn").attr("disabled", true);
+                }
+            });
+            $('.confirm-all-btn').click(function() {
+                console.log(listPenalty.listPenalty());
+                console.log(listPenalty.listPenalty().length);
+                if (listPenalty.listPenalty().length == parseInt(dataLength)) {
+                    $.ajax({
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: "POST",
+                        url: "/Classes/AttendanceConfirm",
+                        data: JSON.stringify({
+                            'attendances': listPenalty.listPenalty(),
+                            'classId': @ViewBag.ClassId
+                        }),
+                        success: function(res) {
+                            console.log(res);
+                            if (res.url != null) {
+                                window.location.href = res.url;
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status);
+                            alert(thrownError);
+                        }
+                    });
+                }
+            });
         });
     </script>
 }

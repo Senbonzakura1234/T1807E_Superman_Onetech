@@ -40,8 +40,8 @@
 .select-option-btn {
     outline: none !important;
     outline-color: transparent !important;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
     border: 1px solid #9d3aff !important;
     color: #9d3aff !important;
 }
@@ -57,8 +57,8 @@
 .select-option-btn-desktop {
     outline: none !important;
     outline-color: transparent !important;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
     border: none !important;
     color: #9d3aff !important;
     width: 140px !important;
@@ -83,4 +83,13 @@
 
 a {
     text-decoration: none !important;
+}
+
+.transition {
+    -webkit-transition: all 0.5s; /* Safari prior 6.1 */
+    transition: all 0.5s;
+}
+.btn {
+    -webkit-transition: all 0.5s; /* Safari prior 6.1 */
+    transition: all 0.5s;
 }

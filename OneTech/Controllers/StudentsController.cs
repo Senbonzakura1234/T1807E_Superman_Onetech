@@ -42,6 +42,8 @@ namespace OneTech.Controllers
                 var startDate = new DateTime(similarDate, 1,1);
                 var endDate = new DateTime(similarDate, 12, 31);
                 predicate = predicate.And(f => f.Birthday <= endDate && f.Birthday >= startDate);
+                ViewBag.advanceStart = start;
+                ViewBag.advanceEnd = end;
             }
             var data = _db.Students.AsExpandable().Where(predicate);
             return View(data);
@@ -78,7 +80,6 @@ namespace OneTech.Controllers
         {
             if (ModelState.IsValid)
             {
-                student.StudentCode = "SC" + student.Id;
                 _db.Students.Add(student);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -126,20 +127,7 @@ namespace OneTech.Controllers
             return View(student);
         }
 
-        // GET: Students/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var student = _db.Students.Find(id);
-            if (student == null)
-            {
-                return HttpNotFound();
-            }
-            return View(student);
-        }
+
 
         // POST: Students/Delete/5
         [HttpPost, ActionName("Delete")]

@@ -1,5 +1,6 @@
 namespace OneTech.Migrations
 {
+    using System;
     using System.Data.Entity.Migrations;
     
     public partial class Initial : DbMigration
@@ -11,7 +12,7 @@ namespace OneTech.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        Name = c.String(),
+                        Name = c.String(nullable: false),
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
                         DeletedAt = c.DateTime(),
@@ -24,7 +25,6 @@ namespace OneTech.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         FullName = c.String(nullable: false),
-                        StudentCode = c.String(nullable: false),
                         ClassId = c.Int(nullable: false),
                         OwedCash = c.Double(nullable: false),
                         OwedPushUp = c.Int(nullable: false),
@@ -33,6 +33,7 @@ namespace OneTech.Migrations
                         CreatedAt = c.DateTime(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false),
                         DeletedAt = c.DateTime(),
+                        StudentStatus = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Classes", t => t.ClassId, cascadeDelete: true)

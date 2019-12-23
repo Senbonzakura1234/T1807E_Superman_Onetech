@@ -13,7 +13,7 @@ namespace OneTech.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201912171536305_Initial"; }
+            get { return "201912231033510_Initial"; }
         }
         
         string IMigrationMetadata.Source

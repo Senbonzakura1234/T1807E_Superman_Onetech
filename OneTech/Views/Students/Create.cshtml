@@ -8,11 +8,11 @@
     <div class="col-md-8 mx-auto grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Customer</h4>
-                <p class="card-description">Create Customer</p>
+                <h4 class="card-title">Student</h4>
+                <p class="card-description">Create Student</p>
                 @using (Html.BeginForm())
                 {
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger text-small" })
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger text-small" })
 
                     @Html.AntiForgeryToken()
                     <div class="form-group">
@@ -27,14 +27,8 @@
                     </div>
                     <div class="form-group">
                         @Html.LabelFor(model => model.Birthday)
-                        @Html.EditorFor(model => model.Birthday, new { htmlAttributes = new { @class = "form-control mb-2", placeholder = "Fullname" } })
+                        @Html.EditorFor(model => model.Birthday, new { htmlAttributes = new { @class = "form-control mb-2", placeholder = "Birthday" } })
                         @Html.ValidationMessageFor(model => model.Birthday, "", new { @class = "text-danger text-small" })
-                    </div>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.StudentStatus)
-                        @Html.EnumDropDownListFor(x => x.StudentStatus, null,
-                            new { @class = "form-control mb-2 selectpicker form-selectpicker search-option-select" })
-                        @Html.ValidationMessageFor(model => model.StudentStatus, "", new { @class = "text-danger text-small" })
                     </div>
                     <input type="submit" class="btn btn-gradient-primary mr-2" value="Create" />
                     <a class="btn btn-light" href="@Url.Action("Index")">

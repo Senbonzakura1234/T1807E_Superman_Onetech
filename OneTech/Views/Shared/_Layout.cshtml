@@ -222,142 +222,48 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="@Url.Action("Index", "Home")">
                             <span class="menu-title">Dashboard</span>
                             <i class="mdi mdi-home menu-icon"></i>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#drop-down-brand"
-                           aria-controls="drop-down-brand">
-                            <span class="menu-title">Brand</span>
+                        <a class="nav-link" data-toggle="collapse" href="#drop-down-student"
+                           aria-controls="drop-down-student">
+                            <span class="menu-title">Students</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-crosshairs-gps menu-icon"></i>
                         </a>
-                        <div class="collapse" id="drop-down-brand">
+                        <div class="collapse" id="drop-down-student">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="#">Index</a>
+                                       href="@Url.Action("Index", "Students")">Index</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Create Brand</a>
+                                    <a class="nav-link" href="@Url.Action("Create", "Students")">Create Student</a>
                                 </li>
                             </ul>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#drop-down-category"
-                           aria-controls="drop-down-category">
-                            <span class="menu-title">Category</span>
+                        <a class="nav-link" data-toggle="collapse" href="#drop-down-class"
+                           aria-controls="drop-down-class">
+                            <span class="menu-title">Classes</span>
                             <i class="menu-arrow"></i>
                             <i class="mdi mdi-crosshairs-gps menu-icon"></i>
                         </a>
-                        <div class="collapse" id="drop-down-category">
+                        <div class="collapse" id="drop-down-class">
                             <ul class="nav flex-column sub-menu">
                                 <li class="nav-item">
                                     <a class="nav-link"
-                                       href="#">Index</a>
+                                       href="@Url.Action("Index", "Classes")">Index</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Create Category</a>
+                                    <a class="nav-link" href="@Url.Action("Create", "Classes")">Create Class</a>
                                 </li>
                             </ul>
                         </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#drop-down-customer"
-                           aria-controls="drop-down-customer">
-                            <span class="menu-title">Customer</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-crosshairs-gps menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="drop-down-customer">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       href="#">Index</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Create Customer</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#drop-down-product"
-                           aria-controls="drop-down-product">
-                            <span class="menu-title">Product</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-crosshairs-gps menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="drop-down-product">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       href="#">Index</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Create Product</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#drop-down-order"
-                           aria-controls="drop-down-order">
-                            <span class="menu-title">Order</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-crosshairs-gps menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="drop-down-order">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link"
-                                       href="#">Index</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="collapse" href="#general-pages" aria-expanded="false"
-                           aria-controls="general-pages">
-                            <span class="menu-title">Sample Pages</span>
-                            <i class="menu-arrow"></i>
-                            <i class="mdi mdi-medical-bag menu-icon"></i>
-                        </a>
-                        <div class="collapse" id="general-pages">
-                            <ul class="nav flex-column sub-menu">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        Blank
-                                        Page
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"> Login </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        Register
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"> 404 </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#"> 500 </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item sidebar-actions">
-                        <span class="nav-link">
-                            <span class="border-bottom">
-                                <span class="font-weight-normal mb-3">Projects</span>
-                            </span>
-                            <button class="btn btn-block btn-lg btn-gradient-primary mt-4">+ Add a project</button>
-                        </span>
                     </li>
                 </ul>
             </nav>
